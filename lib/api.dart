@@ -10,7 +10,11 @@ Future<PocketBase> connect(uri, username, password) async {
 }
 
 Future<List<Place>> getPlaces(PocketBase pb) async {
-  final places = await pb.collection("restaurants").getList();
+  final places = await pb
+      .collection("restaurants")
+      .getList(expand: "tags,reviews_via_restaurant");
 
-  return places.items.map((record) => Place.fromRecord(record)).toList();
+  return places.items.map((record) {
+    return Place.fromRecord(record);
+  }).toList();
 }

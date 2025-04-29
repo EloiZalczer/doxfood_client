@@ -1,24 +1,32 @@
 import 'package:doxfood/models.dart';
-import 'package:doxfood/pages/map/tile.dart';
+import 'package:doxfood/pages/map/place_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class PanelWidet extends StatelessWidget {
+class PanelWidet extends StatefulWidget {
   final ScrollController controller;
   final PanelController panelController;
 
-  const PanelWidet({
+  PanelWidet({
     super.key,
     required this.controller,
     required this.panelController,
   });
 
+  @override
+  State<PanelWidet> createState() => _PanelWidetState();
+}
+
+class _PanelWidetState extends State<PanelWidet> {
+  var navigatorKey = GlobalKey<NavigatorState>();
+
   void togglePanel() {
-    panelController
+    widget
+            .panelController
             .isPanelOpen // FIXME why is the panel never open ??
-        ? panelController.close()
-        : panelController.open();
+        ? widget.panelController.close()
+        : widget.panelController.open();
   }
 
   Widget buildDragHandle() {
@@ -43,23 +51,40 @@ class PanelWidet extends StatelessWidget {
       children: [
         SizedBox(height: 12),
         buildDragHandle(),
-        SizedBox(height: 36),
+        SizedBox(height: 12),
         Expanded(
-          child: Consumer<PlacesModel>(
-            builder: (context, model, child) {
-              return model.places.isNotEmpty
-                  ? ListView.builder(
-                    controller: controller,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    itemCount: model.places.length,
-                    itemBuilder: (context, index) {
-                      return PlaceTile(place: model.places[index]);
-                    },
-                  )
-                  : Center(child: Text("No places"));
+          child: NavigatorPopHandler(
+            onPopWithResult: (result) {
+              navigatorKey.currentState?.maybePop();
             },
+            child: Navigator(
+              key: navigatorKey,
+              onGenerateRoute: (routeSettings) {
+                return MaterialPageRoute(
+                  builder: (context) {
+                    return Consumer<PlacesModel>(
+                      builder: (context, model, child) {
+                        return model.places.isNotEmpty
+                            ? ListView.separated(
+                              separatorBuilder: (context, index) {
+                                return const Divider();
+                              },
+                              controller: widget.controller,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemCount: model.places.length,
+                              itemBuilder: (context, index) {
+                                return PlaceTile(place: model.places[index]);
+                              },
+                            )
+                            : Center(child: Text("No places"));
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ),
       ],

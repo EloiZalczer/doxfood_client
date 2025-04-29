@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       //   ],
       //   // title: const Text("DOXFOOD"),
       // ),
+      resizeToAvoidBottomInset: false,
       body: DefaultTabController(
         length: 2,
         child: Scaffold(
