@@ -1,4 +1,5 @@
 import 'package:doxfood/models.dart';
+import 'package:doxfood/pages/map/rating.dart';
 import 'package:flutter/material.dart';
 
 class ReviewTile extends StatelessWidget {
@@ -12,7 +13,13 @@ class ReviewTile extends StatelessWidget {
       shape: ContinuousRectangleBorder(
         side: BorderSide(color: Colors.black, width: 1),
       ),
-      title: Text(review.text),
+      title: Text(review.user.username),
+      subtitle: Column(
+        children: [
+          StarRatingWidget(rating: review.rating.toDouble()),
+          Text(review.text),
+        ],
+      ),
     );
   }
 }

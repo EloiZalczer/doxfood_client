@@ -9,12 +9,13 @@ class ServerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      shape: ContinuousRectangleBorder(
-        side: BorderSide(color: Colors.black, width: 1),
+    return Card(
+      child: ListTile(
+        title: Text(server.name),
+        subtitle: Text(server.uri),
+        onTap: () => onTap(server),
+        trailing: Icon(Icons.circle, color: Colors.green, size: 12.0),
       ),
-      title: Text(server.name),
-      onTap: () => onTap(server),
     );
   }
 }

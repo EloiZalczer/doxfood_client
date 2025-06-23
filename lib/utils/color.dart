@@ -9,6 +9,6 @@ Color colorFromText(String text) {
   final red = ((finalHash & 0xFF0000) >> 16);
   final blue = ((finalHash & 0xFF00) >> 8);
   final green = ((finalHash & 0xFF));
-  final color = Color.fromRGBO(red, green, blue, 1);
+  final color = Color.fromRGBO(red, green, blue, 0.2);
   return color;
 }

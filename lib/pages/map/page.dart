@@ -1,8 +1,9 @@
 import 'package:doxfood/dialogs/add_place.dart';
+import 'package:doxfood/models.dart';
 import 'package:doxfood/pages/map/panel.dart';
 import 'package:doxfood/pages/map/search_bar.dart';
 import 'package:doxfood/pages/map/map.dart';
-import 'package:doxfood/pages/map/settings_drawer.dart';
+import 'package:doxfood/pages/map/menu_drawer.dart';
 import 'package:doxfood/pages/servers/page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -18,21 +19,23 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final panelController = PanelController();
-  final expansionTileController = ExpansionTileController();
 
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  final GlobalKey<State<PanelWidget>> _panelKey = GlobalKey();
 
   void onMapTapped(
     BuildContext context,
     TapPosition tapPosition,
     LatLng point,
   ) {
-    if (expansionTileController.isExpanded) {
-      expansionTileController.collapse();
+    if (panelController.isPanelOpen) {
+      panelController.close();
     } else {
       AddPlaceDialog.show(context);
     }
   }
+
+  late void Function(Place place) onPlaceTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +52,27 @@ class _MapPageState extends State<MapPage> {
             parallaxEnabled: true,
             parallaxOffset: 0.5,
             borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-            maxHeight: MediaQuery.of(context).size.height * 0.8,
+            maxHeight: MediaQuery.of(context).size.height * 0.75,
             minHeight: MediaQuery.of(context).size.height * 0.15,
             panelBuilder:
-                (controller) => PanelWidet(
+                (controller) => PanelWidget(
+                  builder: (
+                    BuildContext context,
+                    void Function(Place place) openPlacePanel,
+                  ) {
+                    onPlaceTapped = openPlacePanel;
+                  },
                   controller: controller,
                   panelController: panelController,
                 ),
-            body: MapWidget(onMapTapped: onMapTapped),
+            body: MapWidget(
+              key: _panelKey,
+              onMapTapped: onMapTapped,
+              onPlaceTapped: (Place p) {
+                panelController.animatePanelToPosition(0.5);
+                onPlaceTapped(p);
+              },
+            ),
           ),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.04,
@@ -65,21 +81,37 @@ class _MapPageState extends State<MapPage> {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ServersPage()),
-                    );
-                  },
-                  icon: Icon(Icons.public),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ServersPage()),
+                      );
+                    },
+                    icon: Icon(Icons.public),
+                  ),
                 ),
-                Expanded(child: SearchField()),
-                IconButton(
-                  onPressed: () {
-                    _key.currentState!.openEndDrawer();
-                  },
-                  icon: Icon(Icons.account_circle),
+                Expanded(child: Center(child: SearchField())),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      _key.currentState!.openEndDrawer();
+                    },
+                    icon: Icon(Icons.menu),
+                  ),
                 ),
               ],
             ),

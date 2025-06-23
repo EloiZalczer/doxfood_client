@@ -2,23 +2,26 @@ import 'package:doxfood/models.dart';
 import 'package:flutter/material.dart';
 
 class PlaceRatingWidget extends StatelessWidget {
-  const PlaceRatingWidget({super.key, required this.place});
+  const PlaceRatingWidget({super.key, required this.place, this.dense = false});
 
+  final bool dense;
   final Place place;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-      spacing: 5,
+      spacing: 4,
       children: [
         Text(
           place.averageRating.toStringAsFixed(1),
           style: TextStyle(color: Theme.of(context).hintColor),
         ),
-        StarRatingWidget(rating: place.averageRating),
+        dense
+            ? Icon(Icons.star, size: 16, color: AppColors.ratingPrimaryColor)
+            : StarRatingWidget(rating: place.averageRating),
         Text(
-          "(${place.reviews.length})",
+          "(${place.ratings.length})",
           style: TextStyle(color: Theme.of(context).hintColor),
         ),
       ],
@@ -29,8 +32,11 @@ class PlaceRatingWidget extends StatelessWidget {
 // You can replace these colors with your theme or custom color values.
 class AppColors {
   static const Color secondaryContainerGray = Color(0xFFB0BEC5);
-  static const Color ratingPrimaryColor = Color(
-    0xFFFFD700,
+  static const Color ratingPrimaryColor = Color.fromARGB(
+    255,
+    255,
+    200,
+    0,
   ); // Gold color for rating stars
 }
 

@@ -1,25 +1,46 @@
 import 'package:doxfood/models.dart';
+import 'package:doxfood/pages/map/place_panel.dart';
 import 'package:doxfood/pages/map/place_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class PanelWidet extends StatefulWidget {
+typedef PanelBuilder =
+    void Function(
+      BuildContext context,
+      void Function(Place place) openPlacePanel,
+    );
+
+class PanelWidget extends StatefulWidget {
   final ScrollController controller;
   final PanelController panelController;
+  final PanelBuilder builder;
 
-  PanelWidet({
+  const PanelWidget({
     super.key,
     required this.controller,
     required this.panelController,
+    required this.builder,
   });
 
   @override
-  State<PanelWidet> createState() => _PanelWidetState();
+  State<PanelWidget> createState() => _PanelWidgetState();
 }
 
-class _PanelWidetState extends State<PanelWidet> {
+class _PanelWidgetState extends State<PanelWidget> {
   var navigatorKey = GlobalKey<NavigatorState>();
+
+  void openPlacePanel(Place place) {
+    navigatorKey.currentState!.push(
+      PageRouteBuilder(
+        pageBuilder:
+            (context, animation, secondaryAnimation) =>
+                PlacePanel(place: place),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
+  }
 
   void togglePanel() {
     widget
@@ -47,6 +68,8 @@ class _PanelWidetState extends State<PanelWidet> {
 
   @override
   Widget build(BuildContext context) {
+    widget.builder.call(context, openPlacePanel);
+
     return Column(
       children: [
         SizedBox(height: 12),

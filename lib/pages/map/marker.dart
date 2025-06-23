@@ -14,11 +14,11 @@ class PlaceMarker extends StatefulWidget {
   });
 
   @override
-  _PlaceMarkerState createState() => _PlaceMarkerState();
+  State<PlaceMarker> createState() => _PlaceMarkerState();
 }
 
 class _PlaceMarkerState extends State<PlaceMarker> {
-  final key = new GlobalKey();
+  final key = GlobalKey();
 
   @override
   Widget build(BuildContext context) {

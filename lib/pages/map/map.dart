@@ -7,12 +7,13 @@ import 'package:provider/provider.dart';
 
 class MapWidget extends StatelessWidget {
   final Function onMapTapped;
+  final Function onPlaceTapped;
 
-  const MapWidget({super.key, required this.onMapTapped});
-
-  void onPlaceTapped() {
-    print("tapped");
-  }
+  const MapWidget({
+    super.key,
+    required this.onMapTapped,
+    required this.onPlaceTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +45,9 @@ class MapWidget extends StatelessWidget {
                     return Marker(
                       point: LatLng(place.latitude, place.longitude),
                       child: PlaceMarker(
-                        child: FlutterLogo(),
                         place: place,
-                        onTap: onPlaceTapped,
+                        onTap: () => onPlaceTapped(place),
+                        child: FlutterLogo(),
                       ),
                     );
                   }).toList(),

@@ -1,24 +1,38 @@
 import 'package:doxfood/database.dart';
+import 'package:doxfood/dialogs/add_server.dart';
+import 'package:doxfood/models.dart';
 import 'package:doxfood/pages/servers/server_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ServersPage extends StatelessWidget {
-  ServersPage({super.key});
-
-  final List<Server> servers = [
-    Server(name: "Test", uri: "https://pocketbase-doxfood.zalczer.fr"),
-  ];
+  const ServersPage({super.key});
 
   void onServerSelected(Server s) {}
 
   @override
   Widget build(BuildContext context) {
+    var serversList = context.read<ServersListModel>();
+
     return Scaffold(
-      body: ListView.builder(
-        itemCount: servers.length,
-        itemBuilder: (context, index) {
-          return ServerTile(server: servers[index], onTap: onServerSelected);
+      appBar: AppBar(title: Text("Servers")),
+      body: ListView.separated(
+        separatorBuilder: (context, index) {
+          return const Divider();
         },
+        itemCount: serversList.servers.length,
+        itemBuilder: (context, index) {
+          return ServerTile(
+            server: serversList.servers[index],
+            onTap: onServerSelected,
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          AddServerDialog.show(context);
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

@@ -1,4 +1,6 @@
+import 'package:doxfood/models.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SearchPanel extends StatefulWidget {
   const SearchPanel({super.key, required this.controller});
@@ -10,6 +12,42 @@ class SearchPanel extends StatefulWidget {
 }
 
 class _SearchPanelState extends State<SearchPanel> {
+  List<Place> suggestions = [];
+
+  void _updateSuggestions() {
+    if (widget.controller.text.isEmpty) {
+      setState(() {
+        suggestions = [];
+      });
+    } else {
+      setState(() {
+        suggestions =
+            context
+                .read<PlacesModel>()
+                .places
+                .where(
+                  (Place p) => p.name.toLowerCase().startsWith(
+                    widget.controller.text.toLowerCase(),
+                  ),
+                )
+                .take(10)
+                .toList();
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_updateSuggestions);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.controller.removeListener(_updateSuggestions);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,13 +79,18 @@ class _SearchPanelState extends State<SearchPanel> {
               ),
             ),
           ),
-
-          Center(
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("Search"),
+          if (suggestions.isNotEmpty)
+            Expanded(
+              child: ListView.separated(
+                separatorBuilder: (context, index) {
+                  return const Divider();
+                },
+                itemCount: suggestions.length,
+                itemBuilder: (context, index) {
+                  return ListTile(title: Text(suggestions[index].name));
+                },
+              ),
             ),
-          ),
         ],
       ),
     );

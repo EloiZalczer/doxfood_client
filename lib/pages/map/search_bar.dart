@@ -11,6 +11,7 @@ class SearchField extends StatefulWidget {
 class _SearchFieldState extends State<SearchField> {
   Color tileColor = Colors.transparent;
   double textFieldPadding = 10.0;
+  double borderRadius = 18.0;
   TextEditingController controller = TextEditingController();
 
   @override
@@ -22,7 +23,13 @@ class _SearchFieldState extends State<SearchField> {
           left: textFieldPadding,
           right: textFieldPadding,
         ),
-        child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+            borderRadius: BorderRadius.circular(borderRadius),
+            // shape: BoxShape.circle,
+          ),
           child: TextField(
             controller: controller,
             readOnly: true,
@@ -43,8 +50,8 @@ class _SearchFieldState extends State<SearchField> {
               fillColor: Colors.white,
               prefixIcon: Icon(Icons.tune),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide(width: 1),
+                borderRadius: BorderRadius.circular(borderRadius),
+                borderSide: BorderSide(width: 0, style: BorderStyle.none),
               ),
             ),
           ),
