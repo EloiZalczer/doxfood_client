@@ -1,4 +1,4 @@
-import 'package:doxfood/models.dart';
+import 'package:doxfood/api.dart';
 import 'package:flutter/material.dart';
 
 class PlaceMarker extends StatefulWidget {
@@ -6,12 +6,7 @@ class PlaceMarker extends StatefulWidget {
   final Place place;
   final Function onTap;
 
-  const PlaceMarker({
-    super.key,
-    required this.child,
-    required this.place,
-    required this.onTap,
-  });
+  const PlaceMarker({super.key, required this.child, required this.place, required this.onTap});
 
   @override
   State<PlaceMarker> createState() => _PlaceMarkerState();

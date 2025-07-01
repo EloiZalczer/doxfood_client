@@ -1,13 +1,15 @@
+import 'package:doxfood/api.dart';
 import 'package:doxfood/dialogs/add_place.dart';
-import 'package:doxfood/models.dart';
-import 'package:doxfood/pages/map/panel.dart';
-import 'package:doxfood/pages/map/search_bar.dart';
-import 'package:doxfood/pages/map/map.dart';
-import 'package:doxfood/pages/map/menu_drawer.dart';
-import 'package:doxfood/pages/servers/page.dart';
+import 'package:doxfood/models/tags.dart';
+import 'package:doxfood/widgets/panel.dart';
+import 'package:doxfood/widgets/search_bar.dart';
+import 'package:doxfood/widgets/map.dart';
+import 'package:doxfood/widgets/menu_drawer.dart';
+import 'package:doxfood/pages/servers_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MapPage extends StatefulWidget {
@@ -23,11 +25,7 @@ class _MapPageState extends State<MapPage> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   final GlobalKey<State<PanelWidget>> _panelKey = GlobalKey();
 
-  void onMapTapped(
-    BuildContext context,
-    TapPosition tapPosition,
-    LatLng point,
-  ) {
+  void onMapTapped(BuildContext context, TapPosition tapPosition, LatLng point) {
     if (panelController.isPanelOpen) {
       panelController.close();
     } else {
@@ -39,6 +37,8 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(context.read<TagsModel>().tags);
+
     return Scaffold(
       key: _key,
       endDrawer: SettingsDrawer(),
@@ -56,10 +56,7 @@ class _MapPageState extends State<MapPage> {
             minHeight: MediaQuery.of(context).size.height * 0.15,
             panelBuilder:
                 (controller) => PanelWidget(
-                  builder: (
-                    BuildContext context,
-                    void Function(Place place) openPlacePanel,
-                  ) {
+                  builder: (BuildContext context, void Function(Place place) openPlacePanel) {
                     onPlaceTapped = openPlacePanel;
                   },
                   controller: controller,
@@ -90,10 +87,7 @@ class _MapPageState extends State<MapPage> {
                   ),
                   child: IconButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ServersPage()),
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ServersListPage()));
                     },
                     icon: Icon(Icons.public),
                   ),

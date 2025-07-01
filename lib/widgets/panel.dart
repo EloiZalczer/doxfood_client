@@ -1,27 +1,19 @@
-import 'package:doxfood/models.dart';
-import 'package:doxfood/pages/map/place_panel.dart';
-import 'package:doxfood/pages/map/place_tile.dart';
+import 'package:doxfood/api.dart';
+import 'package:doxfood/models/places.dart';
+import 'package:doxfood/widgets/place_panel.dart';
+import 'package:doxfood/widgets/place_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-typedef PanelBuilder =
-    void Function(
-      BuildContext context,
-      void Function(Place place) openPlacePanel,
-    );
+typedef PanelBuilder = void Function(BuildContext context, void Function(Place place) openPlacePanel);
 
 class PanelWidget extends StatefulWidget {
   final ScrollController controller;
   final PanelController panelController;
   final PanelBuilder builder;
 
-  const PanelWidget({
-    super.key,
-    required this.controller,
-    required this.panelController,
-    required this.builder,
-  });
+  const PanelWidget({super.key, required this.controller, required this.panelController, required this.builder});
 
   @override
   State<PanelWidget> createState() => _PanelWidgetState();
@@ -33,9 +25,7 @@ class _PanelWidgetState extends State<PanelWidget> {
   void openPlacePanel(Place place) {
     navigatorKey.currentState!.push(
       PageRouteBuilder(
-        pageBuilder:
-            (context, animation, secondaryAnimation) =>
-                PlacePanel(place: place),
+        pageBuilder: (context, animation, secondaryAnimation) => PlacePanel(place: place),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),
@@ -57,10 +47,7 @@ class _PanelWidgetState extends State<PanelWidget> {
         child: Container(
           width: 30,
           height: 5,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
+          decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.all(Radius.circular(5))),
         ),
       ),
     );

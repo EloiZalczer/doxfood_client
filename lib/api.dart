@@ -1,51 +1,195 @@
-import "package:doxfood/models.dart";
 import "package:pocketbase/pocketbase.dart";
 
-Future<PocketBase> connectWithPassword(uri, username, password) async {
-  final pb = PocketBase(uri);
+class Place {
+  Place({
+    required this.id,
+    required this.name,
+    required this.latitude,
+    required this.longitude,
+    required this.price,
+    required this.ratings,
+    required this.tags,
+    required this.type,
+  });
 
-  await pb.collection("users").authWithPassword(username, password);
+  final String id;
+  final String name;
+  final double latitude;
+  final double longitude;
+  final String price;
+  final List<int> ratings;
+  final List<String> tags;
+  final String type;
 
-  return pb;
+  double get averageRating {
+    return ratings.isNotEmpty ? ratings.reduce((a, b) => a + b) / ratings.length : 0;
+  }
+
+  factory Place.fromRecord(RecordModel record) {
+    return Place(
+      id: record.get<String>("id"),
+      name: record.get<String>("name"),
+      latitude: record.get<double>("latitude"),
+      longitude: record.get<double>("longitude"),
+      price: record.get<String>("price"),
+      tags: record.get<List<RecordModel>>("expand.tags").map((tag) => tag.get<String>("name")).toList(),
+      ratings:
+          record.get<List<RecordModel>>("expand.reviews_via_place").map((review) => review.get<int>("rating")).toList(),
+      type: record.get<RecordModel>("expand.type").get<String>("name"),
+    );
+  }
+
+  @override
+  String toString() {
+    return "Place(id=$id, name=$name, latitude=$latitude, longitude=$longitude, price=$price, ratings=$ratings, tags=$tags, type=$type)";
+  }
 }
 
-Future<PocketBase> connectWithToken(uri, token) async {
-  var store = AuthStore();
-  store.save(token, RecordModel({"verified": false}));
+class Review {
+  Review({required this.text, required this.rating, required this.user});
 
-  final pb = PocketBase(uri, authStore: store);
+  final String text;
+  final int rating;
+  final User user;
 
-  await pb.collection("users").authRefresh();
+  factory Review.fromRecord(RecordModel record) {
+    return Review(
+      text: record.get<String>("text"),
+      rating: record.get<int>("rating"),
+      user: User.fromRecord(record.get<RecordModel>("expand.user")),
+    );
+  }
 
-  return pb;
+  @override
+  String toString() {
+    return "Review(text=$text, rating=$rating, user=$user)";
+  }
 }
 
-Future<List<Place>> getPlaces(PocketBase pb) async {
-  final places = await pb
-      .collection("restaurants")
-      .getList(
-        expand: "tags,reviews_via_restaurant",
-        fields:
-            "id, name, latitude, longitude, price, expand.tags, expand.reviews_via_restaurant.rating",
-      );
+class User {
+  User({required this.id, required this.username});
 
-  return places.items.map((record) {
-    return Place.fromRecord(record);
-  }).toList();
+  final String id;
+  final String username;
+
+  factory User.fromRecord(RecordModel record) {
+    return User(id: record.get<String>("id"), username: record.get<String>("username"));
+  }
+
+  @override
+  String toString() {
+    return "User(id=$id, username=$username)";
+  }
 }
 
-Future<List<Review>> getReviews(PocketBase pb, String placeId) async {
-  final reviews = await pb
-      .collection("reviews")
-      .getFullList(
-        filter: pb.filter("restaurant ~ {:id}", {"id": placeId}),
-        expand: "user",
-        sort: "-created",
-      );
+class Tag {
+  Tag({required this.id, required this.name});
 
-  return reviews
-      .map((record) {
-        return Review.fromRecord(record);
-      })
-      .toList(growable: false);
+  final String id;
+  final String name;
+
+  factory Tag.fromRecord(RecordModel record) {
+    return Tag(id: record.get<String>("id"), name: record.get<String>("name"));
+  }
+
+  @override
+  String toString() {
+    return "Tag(id=$id, name=$name)";
+  }
+}
+
+class PlaceType {
+  PlaceType({required this.id, required this.name, required this.icon});
+
+  final String id;
+  final String name;
+  final String icon;
+
+  factory PlaceType.fromRecord(RecordModel record) {
+    return PlaceType(id: record.get<String>("id"), name: record.get<String>("name"), icon: record.get<String>("icon"));
+  }
+
+  @override
+  String toString() {
+    return "PlaceType(id=$id, name=$name, icon=$icon)";
+  }
+}
+
+class ConnectionFailed implements Exception {}
+
+class API {
+  final PocketBase _pb;
+
+  API._(this._pb);
+
+  PocketBase get pb => _pb;
+
+  static Future<API> createAccountAndConnect(
+    String uri,
+    String username,
+    String password,
+    String passwordConfirm,
+  ) async {
+    final pb = PocketBase(uri);
+
+    await pb
+        .collection("users")
+        .create(body: {"username": username, "password": password, "passwordConfirm": passwordConfirm});
+
+    return API.connectWithPassword(uri, username, password);
+  }
+
+  static Future<API> connectWithPassword(String uri, String username, String password) async {
+    final pb = PocketBase(uri);
+
+    try {
+      await pb.collection("users").authWithPassword(username, password);
+    } on ClientException catch (e) {
+      if (e.statusCode == 400) throw ConnectionFailed();
+    }
+
+    return API._(pb);
+  }
+
+  static Future<API> connectWithToken(String uri, String token) async {
+    var store = AuthStore();
+    store.save(token, RecordModel({"verified": false}));
+
+    final pb = PocketBase(uri, authStore: store);
+
+    await pb.collection("users").authRefresh();
+
+    return API._(pb);
+  }
+
+  Future<List<Place>> getPlaces() async {
+    final places = await _pb
+        .collection("places")
+        .getList(
+          expand: "tags,reviews_via_place",
+          fields: "id, name, latitude, longitude, price, expand.tags, expand.reviews_via_place.rating",
+        );
+
+    return places.items.map((record) {
+      return Place.fromRecord(record);
+    }).toList();
+  }
+
+  Future<List<Review>> getReviews(String placeId) async {
+    final reviews = await _pb
+        .collection("reviews")
+        .getFullList(filter: _pb.filter("place ~ {:id}", {"id": placeId}), expand: "user", sort: "-created");
+
+    return reviews.map((record) {
+      return Review.fromRecord(record);
+    }).toList();
+  }
+
+  Future<List<Tag>> getTags() async {
+    final tags = await _pb.collection("tags").getFullList();
+
+    return tags.map((record) {
+      return Tag.fromRecord(record);
+    }).toList();
+  }
 }

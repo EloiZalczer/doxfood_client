@@ -1,6 +1,6 @@
-import 'package:doxfood/models.dart';
-import 'package:doxfood/pages/map/place_panel.dart';
-import 'package:doxfood/pages/map/rating.dart';
+import 'package:doxfood/api.dart';
+import 'package:doxfood/widgets/place_panel.dart';
+import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/utils/color.dart';
 import 'package:flutter/material.dart';
 
@@ -18,24 +18,15 @@ class PlaceTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              place.name,
-              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0),
-            ),
+            Text(place.name, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0)),
             Row(
               spacing: 8.0,
               children: [
                 PlaceRatingWidget(place: place, dense: true),
                 Text("•", style: TextStyle(color: Theme.of(context).hintColor)),
-                Text(
-                  place.price,
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
+                Text(place.price, style: TextStyle(color: Theme.of(context).hintColor)),
                 Text("•", style: TextStyle(color: Theme.of(context).hintColor)),
-                Text(
-                  "Restaurant",
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
+                Text(place.type, style: TextStyle(color: Theme.of(context).hintColor)),
               ],
             ),
             SizedBox(height: 5.0),
@@ -47,15 +38,9 @@ class PlaceTile extends StatelessWidget {
                   children:
                       place.tags.map((tag) {
                         return DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: colorFromText(tag),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                          decoration: BoxDecoration(color: colorFromText(tag), borderRadius: BorderRadius.circular(20)),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 2,
-                              horizontal: 6,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                             child: Text(tag),
                           ),
                         );
@@ -69,9 +54,7 @@ class PlaceTile extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) =>
-                    PlacePanel(place: place),
+            pageBuilder: (context, animation, secondaryAnimation) => PlacePanel(place: place),
             transitionDuration: Duration.zero,
             reverseTransitionDuration: Duration.zero,
           ),

@@ -1,6 +1,7 @@
+import 'package:doxfood/api.dart';
 import 'package:doxfood/app.dart';
-import 'package:doxfood/database.dart';
-import 'package:doxfood/models.dart';
+import 'package:doxfood/models/servers.dart';
+import 'package:doxfood/models/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -15,27 +16,28 @@ void main() async {
     ),
   );
 
-  ServersListModel serversList = ServersListModel();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  serversList.add(
-    Server(name: "Test", uri: "https://pocketbase-doxfood.zalczer.fr"),
-  );
+  ServersListModel serversList = await ServersListModel.open();
+  await serversList.load();
 
-  PlacesModel placesList = PlacesModel();
+  // serversList.add(Server(name: "Test", uri: "https://doxfood-server.zalczer.fr"));
 
-  placesList.connect(
-    serversList.servers[0],
-    "eloi",
-    "V€ndr3diRégu1ièr€m€nt@pp5tor3",
-  );
+  Settings settings = await Settings.load();
+
+  settings.currentServer;
+
+  final Server? server = (settings.currentServer == null) ? null : serversList.getByName(settings.currentServer!);
+
+  final API? api = (server == null) ? null : await API.connectWithToken(server.uri, server.token!);
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ServersListModel>.value(value: serversList),
-        ChangeNotifierProvider<PlacesModel>.value(value: placesList),
+        Provider<Settings>.value(value: settings),
       ],
-      child: App(),
+      child: App(initialAPI: api),
     ),
   );
 }

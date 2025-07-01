@@ -20,7 +20,10 @@ class _AddPlaceDialogState extends State<AddPlaceDialog> {
   final _formKey = GlobalKey<FormState>();
 
   void _submit() {
-    print("submit");
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     Navigator.pop(context);
   }
 

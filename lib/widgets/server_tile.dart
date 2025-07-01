@@ -1,4 +1,4 @@
-import 'package:doxfood/database.dart';
+import 'package:doxfood/models/servers.dart';
 import 'package:flutter/material.dart';
 
 class ServerTile extends StatelessWidget {

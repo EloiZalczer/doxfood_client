@@ -1,4 +1,4 @@
-import 'package:doxfood/pages/map/search_panel.dart';
+import 'package:doxfood/widgets/search_panel.dart';
 import 'package:flutter/material.dart';
 
 class SearchField extends StatefulWidget {

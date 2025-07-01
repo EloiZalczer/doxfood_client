@@ -1,4 +1,5 @@
-import 'package:doxfood/models.dart';
+import 'package:doxfood/api.dart';
+import 'package:doxfood/models/places.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,11 +26,7 @@ class _SearchPanelState extends State<SearchPanel> {
             context
                 .read<PlacesModel>()
                 .places
-                .where(
-                  (Place p) => p.name.toLowerCase().startsWith(
-                    widget.controller.text.toLowerCase(),
-                  ),
-                )
+                .where((Place p) => p.name.toLowerCase().startsWith(widget.controller.text.toLowerCase()))
                 .take(10)
                 .toList();
       });
