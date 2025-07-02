@@ -11,8 +11,9 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class PlacePanel extends StatefulWidget {
   final PlaceInfo place;
+  final Function(int rating)? onAddReview;
 
-  const PlacePanel({super.key, required this.place});
+  const PlacePanel({super.key, required this.place, this.onAddReview});
 
   @override
   State<PlacePanel> createState() => _PlacePanelState();
@@ -67,13 +68,14 @@ class _PlacePanelState extends State<PlacePanel> {
                     if (!reviews.data!.any((review) => review.user.id == currentUserId)) ...[
                       Text("Leave a review"),
                       RatingField(
-                        onRatingSelected: (int rating) {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) => AddReviewPage(rating: rating, place: widget.place.place),
-                            ),
-                          );
-                        },
+                        onRatingSelected: widget.onAddReview,
+                        // onRatingSelected: (int rating) {
+                        //   Navigator.of(context, rootNavigator: true).push(
+                        //     MaterialPageRoute(
+                        //       builder: (context) => AddReviewPage(rating: rating, place: widget.place.place),
+                        //     ),
+                        //   );
+                        // },
                       ),
                       Divider(height: 10),
                     ],

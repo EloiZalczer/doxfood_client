@@ -1,5 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/places.dart';
+import 'package:doxfood/pages/add_review.dart';
 import 'package:doxfood/widgets/place_panel.dart';
 import 'package:doxfood/widgets/place_tile.dart';
 import 'package:flutter/material.dart';
@@ -26,11 +27,19 @@ class _PanelWidgetState extends State<PanelWidget> {
     widget.panelController.animatePanelToSnapPoint();
     navigatorKey.currentState!.push(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => PlacePanel(place: place),
+        pageBuilder:
+            (context, animation, secondaryAnimation) =>
+                PlacePanel(place: place, onAddReview: (int rating) => openAddReviewPage(place, rating)),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),
     );
+  }
+
+  void openAddReviewPage(PlaceInfo place, int rating) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => AddReviewPage(rating: rating, place: place.place)));
   }
 
   void togglePanel() {
@@ -86,7 +95,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                               padding: EdgeInsets.zero,
                               itemCount: model.places.length,
                               itemBuilder: (context, index) {
-                                return PlaceTile(place: model.places[index]);
+                                return PlaceTile(place: model.places[index], onPlaceTapped: openPlacePanel);
                               },
                             )
                             : Center(child: Text("No places"));

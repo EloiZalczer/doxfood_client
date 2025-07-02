@@ -47,7 +47,11 @@ class PlacesModel extends ChangeNotifier {
   }
 
   Future createReview(placeId, Review review) async {
-    return await _api.pb.collection("reviews").create(body: review.toRecord());
+    print({"place": placeId, ...review.toRecord()});
+
+    await _api.pb.collection("reviews").create(body: {"place": placeId, ...review.toRecord()});
+
+    notifyListeners();
   }
 
   String getCurrentUserId() {

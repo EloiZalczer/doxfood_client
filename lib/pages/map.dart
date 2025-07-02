@@ -1,8 +1,5 @@
 import 'package:doxfood/api.dart';
-import 'package:doxfood/models/place_types.dart';
-import 'package:doxfood/models/places.dart';
 import 'package:doxfood/pages/add_place.dart';
-import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/widgets/panel.dart';
 import 'package:doxfood/widgets/search_bar.dart';
 import 'package:doxfood/widgets/map.dart';
@@ -11,7 +8,6 @@ import 'package:doxfood/pages/servers_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class MapPage extends StatefulWidget {
@@ -31,22 +27,7 @@ class _MapPageState extends State<MapPage> {
     if (panelController.isPanelOpen) {
       panelController.close();
     } else {
-      final PlaceTypesModel placeTypes = context.read<PlaceTypesModel>();
-      final TagsModel tags = context.read<TagsModel>();
-      final PlacesModel places = context.read<PlacesModel>();
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder:
-              (context) => MultiProvider(
-                providers: [
-                  ChangeNotifierProvider<PlaceTypesModel>.value(value: placeTypes),
-                  ChangeNotifierProvider<TagsModel>.value(value: tags),
-                  ChangeNotifierProvider<PlacesModel>.value(value: places),
-                ],
-                child: AddPlacePage(point: point),
-              ),
-        ),
-      );
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddPlacePage(point: point)));
     }
   }
 
@@ -54,8 +35,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(context.read<TagsModel>().tags);
-
     return Scaffold(
       key: _key,
       endDrawer: SettingsDrawer(),

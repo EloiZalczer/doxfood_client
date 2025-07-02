@@ -34,17 +34,7 @@ class _SearchFieldState extends State<SearchField> {
             readOnly: true,
             textInputAction: TextInputAction.search,
             onTap: () {
-              final model = context.read<PlacesModel>();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => ChangeNotifierProvider<PlacesModel>.value(
-                        value: model,
-                        child: SearchPanel(controller: controller),
-                      ),
-                ),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPanel(controller: controller)));
             },
             style: TextStyle(height: 0.6),
             cursorHeight: 20,

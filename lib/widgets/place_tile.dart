@@ -1,6 +1,5 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/place_types.dart';
-import 'package:doxfood/widgets/place_panel.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/utils/color.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +7,9 @@ import 'package:provider/provider.dart';
 
 class PlaceTile extends StatelessWidget {
   final PlaceInfo place;
+  final Function(PlaceInfo place)? onPlaceTapped;
 
-  const PlaceTile({super.key, required this.place});
+  const PlaceTile({super.key, required this.place, this.onPlaceTapped});
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +59,7 @@ class PlaceTile extends StatelessWidget {
         ),
       ),
       onTap: () {
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => PlacePanel(place: place),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero,
-          ),
-        );
+        if (onPlaceTapped != null) onPlaceTapped!(place);
       },
     );
   }

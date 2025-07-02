@@ -24,12 +24,18 @@ class _AddReviewPageState extends State<AddReviewPage> {
       return;
     }
 
-    await context.read<PlacesModel>().createReview(
+    final model = context.read<PlacesModel>();
+
+    await model.createReview(
       widget.place.id,
-      Review(rating: _ratingController.rating!, text: _textController.text, user: User(id: "", username: "")),
+      Review(
+        rating: _ratingController.rating!,
+        text: _textController.text,
+        user: User(id: model.getCurrentUserId(), username: ""),
+      ),
     );
 
-    Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   @override
