@@ -6,11 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class PlacesModel extends ChangeNotifier {
-  final List<Place> _places = [];
+  final List<PlaceInfo> _places = [];
 
   final API _api;
 
-  UnmodifiableListView<Place> get places => UnmodifiableListView(_places);
+  UnmodifiableListView<PlaceInfo> get places => UnmodifiableListView(_places);
 
   PlacesModel({required API api}) : _api = api {
     _loadPlaces();
@@ -27,10 +27,10 @@ class PlacesModel extends ChangeNotifier {
 
   void _onUpdate(RecordSubscriptionEvent e) {
     if (e.action == "create") {
-      _places.add(Place.fromRecord(e.record!));
+      _places.add(PlaceInfo.fromRecord(e.record!));
     } else if (e.action == "update") {
       var index = _places.indexWhere((place) => place.id == e.record!.get<String>("id"));
-      _places[index] = Place.fromRecord(e.record!);
+      _places[index] = PlaceInfo.fromRecord(e.record!);
     } else if (e.action == "delete") {
       var index = _places.indexWhere((place) => place.id == e.record!.get<String>("id"));
       _places.removeAt(index);
@@ -39,12 +39,7 @@ class PlacesModel extends ChangeNotifier {
   }
 
   Future<void> create(Place place) async {
-    final response = await _api.pb.collection("places").create(body: place.toRecord());
-
-    print(response);
-
-    _places.add(place);
-    notifyListeners();
+    await _api.pb.collection("places").create(body: place.toRecord());
   }
 
   Future<List<Review>> getPlaceReviews(placeId) async {

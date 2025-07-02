@@ -5,7 +5,7 @@ import 'package:doxfood/utils/color.dart';
 import 'package:flutter/material.dart';
 
 class PlaceTile extends StatelessWidget {
-  final Place place;
+  final PlaceInfo place;
 
   const PlaceTile({super.key, required this.place});
 

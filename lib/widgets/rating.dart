@@ -6,7 +6,7 @@ class PlaceRatingWidget extends StatelessWidget {
   const PlaceRatingWidget({super.key, required this.place, this.dense = false});
 
   final bool dense;
-  final Place place;
+  final PlaceInfo place;
 
   @override
   Widget build(BuildContext context) {

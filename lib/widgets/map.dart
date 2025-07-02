@@ -1,3 +1,4 @@
+import 'package:doxfood/api.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/widgets/marker.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +10,7 @@ class MapWidget extends StatelessWidget {
   final Function onMapTapped;
   final Function onPlaceTapped;
 
-  const MapWidget({
-    super.key,
-    required this.onMapTapped,
-    required this.onPlaceTapped,
-  });
+  const MapWidget({super.key, required this.onMapTapped, required this.onPlaceTapped});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +21,7 @@ class MapWidget extends StatelessWidget {
         minZoom: 8,
         keepAlive: true,
         interactionOptions: InteractionOptions(rotationThreshold: 0),
-        initialCenter: const LatLng(
-          48.8363012,
-          2.240709935,
-        ), // TODO don't hardcode that
+        initialCenter: const LatLng(48.8363012, 2.240709935), // TODO don't hardcode that
         onTap: (tapPosition, point) {
           onMapTapped(context, tapPosition, point);
         },
@@ -41,14 +35,10 @@ class MapWidget extends StatelessWidget {
           builder: (context, model, child) {
             return MarkerLayer(
               markers:
-                  model.places.map((place) {
+                  model.places.map((PlaceInfo place) {
                     return Marker(
                       point: LatLng(place.latitude, place.longitude),
-                      child: PlaceMarker(
-                        place: place,
-                        onTap: () => onPlaceTapped(place),
-                        child: FlutterLogo(),
-                      ),
+                      child: PlaceMarker(place: place.place, onTap: () => onPlaceTapped(place), child: FlutterLogo()),
                     );
                   }).toList(),
             );

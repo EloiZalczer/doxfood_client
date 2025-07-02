@@ -7,7 +7,6 @@ class Place {
     required this.latitude,
     required this.longitude,
     required this.price,
-    required this.ratings,
     required this.tags,
     required this.type,
   });
@@ -17,13 +16,8 @@ class Place {
   final double latitude;
   final double longitude;
   final String price;
-  final List<int> ratings;
   final List<String> tags;
   final String type;
-
-  double get averageRating {
-    return ratings.isNotEmpty ? ratings.reduce((a, b) => a + b) / ratings.length : 0;
-  }
 
   factory Place.fromRecord(RecordModel record) {
     return Place(
@@ -33,8 +27,6 @@ class Place {
       longitude: record.get<double>("longitude"),
       price: record.get<String>("price"),
       tags: record.get<List<RecordModel>>("expand.tags").map((tag) => tag.get<String>("name")).toList(),
-      ratings:
-          record.get<List<RecordModel>>("expand.reviews_via_place").map((review) => review.get<int>("rating")).toList(),
       type: record.get<RecordModel>("expand.type").get<String>("name"),
     );
   }
@@ -53,7 +45,33 @@ class Place {
 
   @override
   String toString() {
-    return "Place(id=$id, name=$name, latitude=$latitude, longitude=$longitude, price=$price, ratings=$ratings, tags=$tags, type=$type)";
+    return "Place(id=$id, name=$name, latitude=$latitude, longitude=$longitude, price=$price, tags=$tags, type=$type)";
+  }
+}
+
+class PlaceInfo {
+  final Place place;
+  final List<int> ratings;
+
+  PlaceInfo._(this.place, this.ratings);
+
+  String? get id => place.id;
+  String get name => place.name;
+  double get latitude => place.latitude;
+  double get longitude => place.longitude;
+  String get price => place.price;
+  String get type => place.type;
+  List<String> get tags => place.tags;
+
+  double get averageRating {
+    return ratings.isNotEmpty ? ratings.reduce((a, b) => a + b) / ratings.length : 0;
+  }
+
+  factory PlaceInfo.fromRecord(RecordModel record) {
+    return PlaceInfo._(
+      Place.fromRecord(record),
+      record.get<List<RecordModel>>("expand.reviews_via_place").map((review) => review.get<int>("rating")).toList(),
+    );
   }
 }
 
@@ -174,7 +192,7 @@ class API {
     return API._(pb);
   }
 
-  Future<List<Place>> getPlaces() async {
+  Future<List<PlaceInfo>> getPlaces() async {
     final places = await _pb
         .collection("places")
         .getList(
@@ -183,7 +201,7 @@ class API {
         );
 
     return places.items.map((record) {
-      return Place.fromRecord(record);
+      return PlaceInfo.fromRecord(record);
     }).toList();
   }
 

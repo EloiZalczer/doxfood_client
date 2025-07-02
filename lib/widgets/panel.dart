@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-typedef PanelBuilder = void Function(BuildContext context, void Function(Place place) openPlacePanel);
+typedef PanelBuilder = void Function(BuildContext context, void Function(PlaceInfo place) openPlacePanel);
 
 class PanelWidget extends StatefulWidget {
   final ScrollController controller;
@@ -22,7 +22,7 @@ class PanelWidget extends StatefulWidget {
 class _PanelWidgetState extends State<PanelWidget> {
   var navigatorKey = GlobalKey<NavigatorState>();
 
-  void openPlacePanel(Place place) {
+  void openPlacePanel(PlaceInfo place) {
     navigatorKey.currentState!.push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => PlacePanel(place: place),

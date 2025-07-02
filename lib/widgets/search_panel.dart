@@ -13,7 +13,7 @@ class SearchPanel extends StatefulWidget {
 }
 
 class _SearchPanelState extends State<SearchPanel> {
-  List<Place> suggestions = [];
+  List<PlaceInfo> suggestions = [];
 
   void _updateSuggestions() {
     if (widget.controller.text.isEmpty) {
@@ -26,7 +26,7 @@ class _SearchPanelState extends State<SearchPanel> {
             context
                 .read<PlacesModel>()
                 .places
-                .where((Place p) => p.name.toLowerCase().startsWith(widget.controller.text.toLowerCase()))
+                .where((PlaceInfo p) => p.name.toLowerCase().startsWith(widget.controller.text.toLowerCase()))
                 .take(10)
                 .toList();
       });

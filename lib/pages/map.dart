@@ -50,7 +50,7 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  late void Function(Place place) onPlaceTapped;
+  late void Function(PlaceInfo place) onPlaceTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class _MapPageState extends State<MapPage> {
             minHeight: MediaQuery.of(context).size.height * 0.15,
             panelBuilder:
                 (controller) => PanelWidget(
-                  builder: (BuildContext context, void Function(Place place) openPlacePanel) {
+                  builder: (BuildContext context, void Function(PlaceInfo place) openPlacePanel) {
                     onPlaceTapped = openPlacePanel;
                   },
                   controller: controller,
@@ -82,7 +82,7 @@ class _MapPageState extends State<MapPage> {
             body: MapWidget(
               key: _panelKey,
               onMapTapped: onMapTapped,
-              onPlaceTapped: (Place p) {
+              onPlaceTapped: (PlaceInfo p) {
                 panelController.animatePanelToPosition(0.5);
                 onPlaceTapped(p);
               },

@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class PlacePanel extends StatefulWidget {
-  final Place place;
+  final PlaceInfo place;
 
   const PlacePanel({super.key, required this.place});
 
@@ -65,7 +65,7 @@ class _PlacePanelState extends State<PlacePanel> {
                         onRatingSelected: (int rating) {
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
-                              builder: (context) => CreateReviewPage(rating: rating, place: widget.place),
+                              builder: (context) => CreateReviewPage(rating: rating, place: widget.place.place),
                             ),
                           );
                         },
@@ -110,7 +110,7 @@ class _PlacePanelState extends State<PlacePanel> {
 }
 
 class PlacePanelHeader extends StatelessWidget {
-  final Place place;
+  final PlaceInfo place;
 
   const PlacePanelHeader({super.key, required this.place});
 
