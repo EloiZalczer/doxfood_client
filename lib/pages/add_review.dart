@@ -1,24 +1,33 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/models/places.dart';
 import 'package:doxfood/widgets/fields/rating_field.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class CreateReviewPage extends StatefulWidget {
+class AddReviewPage extends StatefulWidget {
   final Place place;
   final int? rating;
 
-  const CreateReviewPage({super.key, required this.place, this.rating});
+  const AddReviewPage({super.key, required this.place, this.rating});
 
   @override
-  State<CreateReviewPage> createState() => _CreateReviewPageState();
+  State<AddReviewPage> createState() => _AddReviewPageState();
 }
 
-class _CreateReviewPageState extends State<CreateReviewPage> {
+class _AddReviewPageState extends State<AddReviewPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late RatingController _ratingController = RatingController(rating: widget.rating);
+  final TextEditingController _textController = TextEditingController();
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
+    await context.read<PlacesModel>().createReview(
+      widget.place.id,
+      Review(rating: _ratingController.rating!, text: _textController.text, user: User(id: "", username: "")),
+    );
 
     Navigator.pop(context);
   }
@@ -35,10 +44,11 @@ class _CreateReviewPageState extends State<CreateReviewPage> {
             child: Column(
               spacing: 20,
               children: [
-                RatingField(controller: RatingController(rating: widget.rating)),
+                RatingField(controller: _ratingController),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: TextFormField(
+                    controller: _textController,
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     decoration: InputDecoration(hintText: "Leave a review"),

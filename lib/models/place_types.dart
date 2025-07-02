@@ -42,4 +42,8 @@ class PlaceTypesModel extends ChangeNotifier {
     _placeTypes.add(tag);
     notifyListeners();
   }
+
+  PlaceType getById(String id) {
+    return _placeTypes.firstWhere((pt) => pt.id == id);
+  }
 }

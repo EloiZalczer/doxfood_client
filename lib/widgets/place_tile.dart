@@ -1,8 +1,10 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/widgets/place_panel.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/utils/color.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PlaceTile extends StatelessWidget {
   final PlaceInfo place;
@@ -11,6 +13,8 @@ class PlaceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PlaceTypesModel model = context.read<PlaceTypesModel>();
+
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -26,7 +30,7 @@ class PlaceTile extends StatelessWidget {
                 Text("•", style: TextStyle(color: Theme.of(context).hintColor)),
                 Text(place.price, style: TextStyle(color: Theme.of(context).hintColor)),
                 Text("•", style: TextStyle(color: Theme.of(context).hintColor)),
-                Text(place.type, style: TextStyle(color: Theme.of(context).hintColor)),
+                Text(model.getById(place.type).name, style: TextStyle(color: Theme.of(context).hintColor)),
               ],
             ),
             SizedBox(height: 5.0),
@@ -38,10 +42,13 @@ class PlaceTile extends StatelessWidget {
                   children:
                       place.tags.map((tag) {
                         return DecoratedBox(
-                          decoration: BoxDecoration(color: colorFromText(tag), borderRadius: BorderRadius.circular(20)),
+                          decoration: BoxDecoration(
+                            color: colorFromText(tag.name),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                            child: Text(tag),
+                            child: Text(tag.name),
                           ),
                         );
                       }).toList(),

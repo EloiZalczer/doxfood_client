@@ -12,13 +12,11 @@ class PriceField extends StatefulWidget {
 class _PriceFieldState extends State<PriceField> {
   List<String> labels = ["1-10€", "10-15€", "15-20€", ">20€"];
 
-  late PriceController controller;
+  late PriceController controller = widget.controller ?? PriceController();
 
   @override
   void initState() {
     super.initState();
-
-    controller = widget.controller ?? PriceController();
 
     controller.addListener(() {
       setState(() {});

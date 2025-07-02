@@ -1,6 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/places.dart';
-import 'package:doxfood/pages/create_review.dart';
+import 'package:doxfood/pages/add_review.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/widgets/fields/rating_field.dart';
 import 'package:doxfood/widgets/review_tile.dart';
@@ -49,6 +49,11 @@ class _PlacePanelState extends State<PlacePanel> {
             ],
           ),
         ),
+        if (widget.place.description != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [Text(widget.place.description!)]),
+          ),
         Divider(height: 10),
         Expanded(
           child: FutureBuilder(
@@ -65,7 +70,7 @@ class _PlacePanelState extends State<PlacePanel> {
                         onRatingSelected: (int rating) {
                           Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
-                              builder: (context) => CreateReviewPage(rating: rating, place: widget.place.place),
+                              builder: (context) => AddReviewPage(rating: rating, place: widget.place.place),
                             ),
                           );
                         },
@@ -129,8 +134,14 @@ class PlacePanelHeader extends StatelessWidget {
               children:
                   place.tags.map((tag) {
                     return DecoratedBox(
-                      decoration: BoxDecoration(color: colorFromText(tag), borderRadius: BorderRadius.circular(20)),
-                      child: Padding(padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6), child: Text(tag)),
+                      decoration: BoxDecoration(
+                        color: colorFromText(tag.name),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
+                        child: Text(tag.name),
+                      ),
                     );
                   }).toList(),
             ),

@@ -1,33 +1,39 @@
+import "package:latlong2/latlong.dart";
 import "package:pocketbase/pocketbase.dart";
 
 class Place {
   Place({
     this.id,
     required this.name,
-    required this.latitude,
-    required this.longitude,
+    required this.location,
     required this.price,
     required this.tags,
     required this.type,
+    this.googleMapsLink,
+    this.description,
   });
 
   final String? id;
   final String name;
-  final double latitude;
-  final double longitude;
+  final LatLng location;
   final String price;
-  final List<String> tags;
+  final List<Tag> tags;
   final String type;
+  final String? googleMapsLink;
+  final String? description;
 
   factory Place.fromRecord(RecordModel record) {
+    final location = record.get<Map>("location");
+
     return Place(
       id: record.get<String>("id"),
       name: record.get<String>("name"),
-      latitude: record.get<double>("latitude"),
-      longitude: record.get<double>("longitude"),
+      location: LatLng(location["lat"], location["lon"]),
       price: record.get<String>("price"),
-      tags: record.get<List<RecordModel>>("expand.tags").map((tag) => tag.get<String>("name")).toList(),
-      type: record.get<RecordModel>("expand.type").get<String>("name"),
+      tags: record.get<List<RecordModel>>("expand.tags").map((tag) => Tag.fromRecord(tag)).toList(),
+      type: record.get<String>("type"),
+      googleMapsLink: record.get<String?>("googleMapsLink"),
+      description: record.get<String?>("description"),
     );
   }
 
@@ -35,17 +41,18 @@ class Place {
     return {
       "id": id,
       "name": name,
-      "latitude": latitude,
-      "longitude": longitude,
+      "location": {"lat": location.latitude, "lon": location.longitude},
       "price": price,
-      "tags": tags,
+      "tags": tags.map((tag) => tag.id).toList(),
       "type": type,
+      "googleMapsLink": googleMapsLink,
+      "description": description,
     };
   }
 
   @override
   String toString() {
-    return "Place(id=$id, name=$name, latitude=$latitude, longitude=$longitude, price=$price, tags=$tags, type=$type)";
+    return "Place(id=$id, name=$name, location=$location, price=$price, tags=$tags, type=$type)";
   }
 }
 
@@ -57,11 +64,11 @@ class PlaceInfo {
 
   String? get id => place.id;
   String get name => place.name;
-  double get latitude => place.latitude;
-  double get longitude => place.longitude;
+  LatLng get location => place.location;
   String get price => place.price;
   String get type => place.type;
-  List<String> get tags => place.tags;
+  List<Tag> get tags => place.tags;
+  String? get description => place.description;
 
   double get averageRating {
     return ratings.isNotEmpty ? ratings.reduce((a, b) => a + b) / ratings.length : 0;
@@ -76,18 +83,24 @@ class PlaceInfo {
 }
 
 class Review {
-  Review({required this.text, required this.rating, required this.user});
+  Review({this.id, required this.text, required this.rating, required this.user});
 
+  final String? id;
   final String text;
   final int rating;
   final User user;
 
   factory Review.fromRecord(RecordModel record) {
     return Review(
+      id: record.get<String>("id"),
       text: record.get<String>("text"),
       rating: record.get<int>("rating"),
       user: User.fromRecord(record.get<RecordModel>("expand.user")),
     );
+  }
+
+  Map<String, dynamic> toRecord() {
+    return {"id": id, "text": text, "rating": rating, "user": user.id};
   }
 
   @override
@@ -197,7 +210,7 @@ class API {
         .collection("places")
         .getList(
           expand: "tags,reviews_via_place",
-          fields: "id, name, latitude, longitude, price, expand.tags, expand.reviews_via_place.rating",
+          fields: "id, name, location, price, type, expand.tags, expand.reviews_via_place.rating",
         );
 
     return places.items.map((record) {

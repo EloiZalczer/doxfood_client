@@ -9,10 +9,12 @@ class TagsField extends FormField<List<String>> {
     super.validator,
     List<String> super.initialValue = const [],
     required List<Tag> options,
+    MultiSelectController<Tag>? controller,
     bool autovalidate = false,
   }) : super(
          builder: (FormFieldState<List<String>> state) {
            return MultiDropdown(
+             controller: controller,
              items: options.map((opt) => DropdownItem(label: opt.name, value: opt.id)).toList(),
              fieldDecoration: FieldDecoration(labelText: "Tags", border: UnderlineInputBorder()),
            );

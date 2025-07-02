@@ -3,11 +3,13 @@ import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/widgets/fields/gmaps_link_field.dart';
+import 'package:doxfood/widgets/fields/place_type_field.dart';
 import 'package:doxfood/widgets/fields/price_field.dart';
 import 'package:doxfood/widgets/fields/tags_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:provider/provider.dart';
 
 const _pricesMap = ["€", "€€", "€€€", "€€€€"];
@@ -25,7 +27,9 @@ class _AddPlacePageState extends State<AddPlacePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _priceController = PriceController();
-  PlaceType? _type;
+  final _tagsController = MultiSelectController();
+  final _placeTypeController = PlaceTypeController();
+  final _descriptionController = TextEditingController();
 
   late FocusNode _focusNode;
 
@@ -50,15 +54,16 @@ class _AddPlacePageState extends State<AddPlacePage> {
 
     await context.read<PlacesModel>().create(
       Place(
-        latitude: widget.point.latitude,
-        longitude: widget.point.longitude,
+        location: widget.point,
         name: _nameController.text,
-        type: _type!.id,
+        type: _placeTypeController.type!.id,
         price: _pricesMap[_priceController.price!],
+        tags: _tagsController.items.map((e) => e.value as Tag).toList(),
+        description: _descriptionController.text,
       ),
     );
 
-    Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -104,17 +109,15 @@ class _AddPlacePageState extends State<AddPlacePage> {
                     return null;
                   },
                 ),
+                TextFormField(
+                  controller: _descriptionController,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(hintText: "Description (optional)"),
+                ),
                 Consumer<PlaceTypesModel>(
                   builder: (context, model, child) {
-                    return DropdownButtonFormField(
-                      items: model.placeTypes.map((pt) => DropdownMenuItem(value: pt, child: Text(pt.name))).toList(),
-                      onChanged: (s) {
-                        setState(() {
-                          _type = s;
-                        });
-                      },
-                      decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Type"),
-                    );
+                    return PlaceTypeField(options: model.placeTypes, controller: _placeTypeController);
                   },
                 ),
                 Consumer<TagsModel>(

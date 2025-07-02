@@ -46,6 +46,10 @@ class PlacesModel extends ChangeNotifier {
     return await _api.getReviews(placeId);
   }
 
+  Future createReview(placeId, Review review) async {
+    return await _api.pb.collection("reviews").create(body: review.toRecord());
+  }
+
   String getCurrentUserId() {
     return _api.pb.authStore.record!.get<String>("id");
   }

@@ -37,7 +37,7 @@ class MapWidget extends StatelessWidget {
               markers:
                   model.places.map((PlaceInfo place) {
                     return Marker(
-                      point: LatLng(place.latitude, place.longitude),
+                      point: place.location,
                       child: PlaceMarker(place: place.place, onTap: () => onPlaceTapped(place), child: FlutterLogo()),
                     );
                   }).toList(),

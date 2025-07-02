@@ -23,6 +23,7 @@ class _PanelWidgetState extends State<PanelWidget> {
   var navigatorKey = GlobalKey<NavigatorState>();
 
   void openPlacePanel(PlaceInfo place) {
+    widget.panelController.animatePanelToSnapPoint();
     navigatorKey.currentState!.push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => PlacePanel(place: place),

@@ -1,5 +1,7 @@
+import 'package:doxfood/models/places.dart';
 import 'package:doxfood/widgets/search_panel.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SearchField extends StatefulWidget {
   const SearchField({super.key});
@@ -19,10 +21,7 @@ class _SearchFieldState extends State<SearchField> {
     return SizedBox(
       height: 40,
       child: Padding(
-        padding: EdgeInsets.only(
-          left: textFieldPadding,
-          right: textFieldPadding,
-        ),
+        padding: EdgeInsets.only(left: textFieldPadding, right: textFieldPadding),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -35,10 +34,15 @@ class _SearchFieldState extends State<SearchField> {
             readOnly: true,
             textInputAction: TextInputAction.search,
             onTap: () {
+              final model = context.read<PlacesModel>();
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SearchPanel(controller: controller),
+                  builder:
+                      (context) => ChangeNotifierProvider<PlacesModel>.value(
+                        value: model,
+                        child: SearchPanel(controller: controller),
+                      ),
                 ),
               );
             },
