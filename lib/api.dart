@@ -192,4 +192,12 @@ class API {
       return Tag.fromRecord(record);
     }).toList();
   }
+
+  Future<List<PlaceType>> getPlaceTypes() async {
+    final tags = await _pb.collection("place_types").getFullList();
+
+    return tags.map((record) {
+      return PlaceType.fromRecord(record);
+    }).toList();
+  }
 }

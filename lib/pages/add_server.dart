@@ -1,5 +1,5 @@
 import 'package:doxfood/models/servers.dart';
-import 'package:doxfood/widgets/password_field.dart';
+import 'package:doxfood/widgets/fields/password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:provider/provider.dart';

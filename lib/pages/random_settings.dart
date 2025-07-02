@@ -1,7 +1,6 @@
-import 'package:doxfood/api.dart';
 import 'package:doxfood/models/tags.dart';
+import 'package:doxfood/widgets/fields/tags_field.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:provider/provider.dart';
 
 class RandomSettingsPage extends StatelessWidget {
@@ -29,6 +28,8 @@ class RandomSettingsPage extends StatelessWidget {
               //     ),
               //   ),
               // ),
+              Text("Price"),
+              PriceRangeField(initialValue: PriceRange(min: 1, max: 4)),
               Text("Include tags", style: TextStyle(fontWeight: FontWeight.bold)),
               Consumer<TagsModel>(
                 builder: (context, value, child) {
@@ -86,19 +87,4 @@ class PriceRangeField extends FormField<PriceRange> {
 
 String priceToLabel(int price) {
   return "€" * price;
-}
-
-class TagsField extends FormField<List<String>> {
-  TagsField({
-    super.key,
-    super.onSaved,
-    super.validator,
-    List<String> super.initialValue = const [],
-    required List<Tag> options,
-    bool autovalidate = false,
-  }) : super(
-         builder: (FormFieldState<List<String>> state) {
-           return MultiDropdown(items: options.map((opt) => DropdownItem(label: opt.name, value: opt.id)).toList());
-         },
-       );
 }

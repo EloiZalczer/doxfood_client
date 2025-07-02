@@ -1,5 +1,6 @@
 import 'package:doxfood/api.dart';
-import 'package:doxfood/dialogs/add_place.dart';
+import 'package:doxfood/models/place_types.dart';
+import 'package:doxfood/pages/add_place.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/widgets/panel.dart';
 import 'package:doxfood/widgets/search_bar.dart';
@@ -29,7 +30,20 @@ class _MapPageState extends State<MapPage> {
     if (panelController.isPanelOpen) {
       panelController.close();
     } else {
-      AddPlaceDialog.show(context);
+      final PlaceTypesModel placeTypes = context.read<PlaceTypesModel>();
+      final TagsModel tags = context.read<TagsModel>();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder:
+              (context) => MultiProvider(
+                providers: [
+                  ChangeNotifierProvider<PlaceTypesModel>.value(value: placeTypes),
+                  ChangeNotifierProvider<TagsModel>.value(value: tags),
+                ],
+                child: AddPlacePage(point: point),
+              ),
+        ),
+      );
     }
   }
 

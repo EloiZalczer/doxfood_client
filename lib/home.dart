@@ -1,4 +1,5 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/tags.dart';
@@ -21,11 +22,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final PlacesModel places = PlacesModel(api: widget.api);
     final TagsModel tags = TagsModel(api: widget.api);
+    final PlaceTypesModel placeTypes = PlaceTypesModel(api: widget.api);
 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PlacesModel>.value(value: places),
         ChangeNotifierProvider<TagsModel>.value(value: tags),
+        ChangeNotifierProvider<PlaceTypesModel>.value(value: placeTypes),
         Provider<API>.value(value: widget.api),
       ],
       child: SafeArea(

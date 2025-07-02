@@ -2,7 +2,7 @@ import 'package:doxfood/api.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/pages/create_review.dart';
 import 'package:doxfood/widgets/rating.dart';
-import 'package:doxfood/widgets/rating_field.dart';
+import 'package:doxfood/widgets/fields/rating_field.dart';
 import 'package:doxfood/widgets/review_tile.dart';
 import 'package:doxfood/utils/color.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
 import 'package:doxfood/api.dart';
-import 'package:doxfood/widgets/rating_field.dart';
+import 'package:doxfood/widgets/fields/rating_field.dart';
 import 'package:flutter/material.dart';
 
 class CreateReviewPage extends StatefulWidget {
