@@ -38,7 +38,11 @@ class PlacesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void create(Place place) {
+  Future<void> create(Place place) async {
+    final response = await _api.pb.collection("places").create(body: place.toRecord());
+
+    print(response);
+
     _places.add(place);
     notifyListeners();
   }

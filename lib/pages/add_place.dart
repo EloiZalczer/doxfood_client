@@ -1,4 +1,6 @@
+import 'package:doxfood/api.dart';
 import 'package:doxfood/models/place_types.dart';
+import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/widgets/fields/gmaps_link_field.dart';
 import 'package:doxfood/widgets/fields/price_field.dart';
@@ -7,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+
+const _pricesMap = ["€", "€€", "€€€", "€€€€"];
 
 class AddPlacePage extends StatefulWidget {
   final LatLng point;
@@ -19,6 +23,9 @@ class AddPlacePage extends StatefulWidget {
 
 class _AddPlacePageState extends State<AddPlacePage> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _priceController = PriceController();
+  PlaceType? _type;
 
   late FocusNode _focusNode;
 
@@ -36,10 +43,20 @@ class _AddPlacePageState extends State<AddPlacePage> {
     super.dispose();
   }
 
-  void _submit() {
+  void _submit() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
+    await context.read<PlacesModel>().create(
+      Place(
+        latitude: widget.point.latitude,
+        longitude: widget.point.longitude,
+        name: _nameController.text,
+        type: _type!.id,
+        price: _pricesMap[_priceController.price!],
+      ),
+    );
 
     Navigator.pop(context);
   }
@@ -76,6 +93,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                   ),
                 ),
                 TextFormField(
+                  controller: _nameController,
                   focusNode: _focusNode,
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Name"),
@@ -89,9 +107,12 @@ class _AddPlacePageState extends State<AddPlacePage> {
                 Consumer<PlaceTypesModel>(
                   builder: (context, model, child) {
                     return DropdownButtonFormField(
-                      items:
-                          model.placeTypes.map((pt) => DropdownMenuItem(value: pt.id, child: Text(pt.name))).toList(),
-                      onChanged: (s) {},
+                      items: model.placeTypes.map((pt) => DropdownMenuItem(value: pt, child: Text(pt.name))).toList(),
+                      onChanged: (s) {
+                        setState(() {
+                          _type = s;
+                        });
+                      },
                       decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Type"),
                     );
                   },
@@ -102,10 +123,10 @@ class _AddPlacePageState extends State<AddPlacePage> {
                   },
                 ),
                 Text("Price"),
-                PriceField(),
+                PriceField(controller: _priceController),
                 GoogleMapsLinkField(),
                 Spacer(),
-                ElevatedButton(onPressed: () {}, child: Text("Create")),
+                ElevatedButton(onPressed: _submit, child: Text("Create")),
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/place_types.dart';
+import 'package:doxfood/models/places.dart';
 import 'package:doxfood/pages/add_place.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/widgets/panel.dart';
@@ -32,6 +33,7 @@ class _MapPageState extends State<MapPage> {
     } else {
       final PlaceTypesModel placeTypes = context.read<PlaceTypesModel>();
       final TagsModel tags = context.read<TagsModel>();
+      final PlacesModel places = context.read<PlacesModel>();
       Navigator.of(context).push(
         MaterialPageRoute(
           builder:
@@ -39,6 +41,7 @@ class _MapPageState extends State<MapPage> {
                 providers: [
                   ChangeNotifierProvider<PlaceTypesModel>.value(value: placeTypes),
                   ChangeNotifierProvider<TagsModel>.value(value: tags),
+                  ChangeNotifierProvider<PlacesModel>.value(value: places),
                 ],
                 child: AddPlacePage(point: point),
               ),

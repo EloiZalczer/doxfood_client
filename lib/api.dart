@@ -2,7 +2,7 @@ import "package:pocketbase/pocketbase.dart";
 
 class Place {
   Place({
-    required this.id,
+    this.id,
     required this.name,
     required this.latitude,
     required this.longitude,
@@ -12,7 +12,7 @@ class Place {
     required this.type,
   });
 
-  final String id;
+  final String? id;
   final String name;
   final double latitude;
   final double longitude;
@@ -37,6 +37,18 @@ class Place {
           record.get<List<RecordModel>>("expand.reviews_via_place").map((review) => review.get<int>("rating")).toList(),
       type: record.get<RecordModel>("expand.type").get<String>("name"),
     );
+  }
+
+  Map<String, dynamic> toRecord() {
+    return {
+      "id": id,
+      "name": name,
+      "latitude": latitude,
+      "longitude": longitude,
+      "price": price,
+      "tags": tags,
+      "type": type,
+    };
   }
 
   @override
