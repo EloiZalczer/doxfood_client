@@ -102,7 +102,9 @@ class _PlacePanelState extends State<PlacePanel> {
                       return Divider();
                     },
                     itemBuilder: (context, index) {
-                      return ReviewTile(review: Review(text: "text", rating: 0, user: User(id: "", username: "user")));
+                      return ReviewTile(
+                        review: Review(id: "", text: "text", rating: 0, user: User(id: "", username: "user")),
+                      );
                     },
                   ),
                 );

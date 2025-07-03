@@ -38,8 +38,7 @@ class TagsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void create(Tag tag) {
-    _tags.add(tag);
-    notifyListeners();
+  Future<void> create(PlaceType placeType, String name) async {
+    await _api.pb.collection("tags").create(body: {"name": name, "place_type": placeType.id});
   }
 }

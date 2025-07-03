@@ -1,4 +1,4 @@
-import 'package:doxfood/pages/random_settings.dart';
+import 'package:doxfood/pages/filters_list.dart';
 import 'package:flutter/material.dart';
 
 class RandomPage extends StatelessWidget {
@@ -16,7 +16,7 @@ class RandomPage extends StatelessWidget {
               label: const Text("Configure"),
               icon: const Icon(Icons.settings),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const RandomSettingsPage()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const FiltersListPage()));
               },
             ),
           ],

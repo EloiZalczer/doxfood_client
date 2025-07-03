@@ -11,9 +11,12 @@ class PlacesField extends FormField<List<PlaceInfo>> {
     required List<PlaceInfo> options,
     MultiSelectController<PlaceInfo>? controller,
     bool autovalidate = false,
+    bool enabled = true,
   }) : super(
          builder: (FormFieldState<List<PlaceInfo>> state) {
            return MultiDropdown(
+             enabled: enabled,
+             searchEnabled: true,
              controller: controller,
              items: options.map((opt) => DropdownItem(label: opt.name, value: opt)).toList(),
              fieldDecoration: FieldDecoration(labelText: "Places", border: UnderlineInputBorder()),

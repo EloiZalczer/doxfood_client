@@ -1,6 +1,8 @@
 import "package:latlong2/latlong.dart";
 import "package:pocketbase/pocketbase.dart";
 
+typedef ID = String;
+
 class Place {
   Place({
     required this.id,
@@ -13,7 +15,7 @@ class Place {
     this.description,
   });
 
-  final String id;
+  final ID id;
   final String name;
   final LatLng location;
   final String price;
@@ -26,7 +28,7 @@ class Place {
     final location = record.get<Map>("location");
 
     return Place(
-      id: record.get<String>("id"),
+      id: record.get<ID>("id"),
       name: record.get<String>("name"),
       location: LatLng(location["lat"], location["lon"]),
       price: record.get<String>("price"),
@@ -49,7 +51,7 @@ class PlaceInfo {
 
   PlaceInfo._(this.place, this.ratings);
 
-  String? get id => place.id;
+  ID? get id => place.id;
   String get name => place.name;
   LatLng get location => place.location;
   String get price => place.price;
@@ -70,16 +72,16 @@ class PlaceInfo {
 }
 
 class Review {
-  Review({this.id, required this.text, required this.rating, required this.user});
+  Review({required this.id, required this.text, required this.rating, required this.user});
 
-  final String? id;
+  final ID id;
   final String text;
   final int rating;
   final User user;
 
   factory Review.fromRecord(RecordModel record) {
     return Review(
-      id: record.get<String>("id"),
+      id: record.get<ID>("id"),
       text: record.get<String>("text"),
       rating: record.get<int>("rating"),
       user: User.fromRecord(record.get<RecordModel>("expand.user")),
@@ -95,11 +97,11 @@ class Review {
 class User {
   User({required this.id, required this.username});
 
-  final String id;
+  final ID id;
   final String username;
 
   factory User.fromRecord(RecordModel record) {
-    return User(id: record.get<String>("id"), username: record.get<String>("username"));
+    return User(id: record.get<ID>("id"), username: record.get<String>("username"));
   }
 
   @override
@@ -111,11 +113,11 @@ class User {
 class Tag {
   Tag({required this.id, required this.name});
 
-  final String id;
+  final ID id;
   final String name;
 
   factory Tag.fromRecord(RecordModel record) {
-    return Tag(id: record.get<String>("id"), name: record.get<String>("name"));
+    return Tag(id: record.get<ID>("id"), name: record.get<String>("name"));
   }
 
   @override
@@ -124,15 +126,71 @@ class Tag {
   }
 }
 
+class Filter {
+  final ID id;
+  final bool priceRangeEnabled;
+  final bool includeTagsEnabled;
+  final bool excludeTagsEnabled;
+  final bool includePlacesEnabled;
+  final bool excludePlacesEnabled;
+  final ID placeType;
+  final String lowerPriceBound;
+  final String upperPriceBound;
+  final List<ID> includedTags;
+  final List<ID> excludedTags;
+  final List<ID> includedPlaces;
+  final List<ID> excludedPlaces;
+  final ID user;
+  final String name;
+
+  Filter({
+    required this.id,
+    required this.priceRangeEnabled,
+    required this.includeTagsEnabled,
+    required this.excludeTagsEnabled,
+    required this.includePlacesEnabled,
+    required this.excludePlacesEnabled,
+    required this.placeType,
+    required this.lowerPriceBound,
+    required this.upperPriceBound,
+    required this.includedTags,
+    required this.excludedTags,
+    required this.includedPlaces,
+    required this.excludedPlaces,
+    required this.user,
+    required this.name,
+  });
+
+  factory Filter.fromRecord(RecordModel record) {
+    return Filter(
+      id: record.get<String>("id"),
+      priceRangeEnabled: record.get("priceRangeEnabled"),
+      includeTagsEnabled: record.get("includeTagsEnabled"),
+      excludeTagsEnabled: record.get("excludeTagsEnabled"),
+      includePlacesEnabled: record.get("includePlacesEnabled"),
+      excludePlacesEnabled: record.get("excludePlacesEnabled"),
+      placeType: record.get("placeType"),
+      lowerPriceBound: record.get("lowerPriceBound"),
+      upperPriceBound: record.get("upperPriceBound"),
+      includedTags: record.get("includedTags"),
+      excludedTags: record.get("excludedTags"),
+      includedPlaces: record.get("includedPlaces"),
+      excludedPlaces: record.get("excludedPlaces"),
+      user: record.get("user"),
+      name: record.get("name"),
+    );
+  }
+}
+
 class PlaceType {
   PlaceType({required this.id, required this.name, required this.icon});
 
-  final String id;
+  final ID id;
   final String name;
   final String icon;
 
   factory PlaceType.fromRecord(RecordModel record) {
-    return PlaceType(id: record.get<String>("id"), name: record.get<String>("name"), icon: record.get<String>("icon"));
+    return PlaceType(id: record.get<ID>("id"), name: record.get<String>("name"), icon: record.get<String>("icon"));
   }
 
   @override
@@ -216,6 +274,14 @@ class API {
 
     return tags.map((record) {
       return Tag.fromRecord(record);
+    }).toList();
+  }
+
+  Future<List<Filter>> getFilters() async {
+    final filters = await _pb.collection("filters").getFullList();
+
+    return filters.map((record) {
+      return Filter.fromRecord(record);
     }).toList();
   }
 

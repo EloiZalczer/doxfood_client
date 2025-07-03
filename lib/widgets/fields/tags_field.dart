@@ -3,56 +3,27 @@ import 'dart:collection';
 import 'package:doxfood/api.dart';
 import 'package:doxfood/utils/color.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_dropdown/multi_dropdown.dart';
 
-class TagsField extends FormField<List<String>> {
-  TagsField({
-    super.key,
-    super.onSaved,
-    super.validator,
-    List<String> super.initialValue = const [],
-    required List<Tag> options,
-    MultiSelectController<Tag>? controller,
-    bool autovalidate = false,
-  }) : super(
-         builder: (FormFieldState<List<String>> state) {
-           return MultiDropdown(
-             controller: controller,
-             searchEnabled: true,
-             items: options.map((opt) => DropdownItem(label: opt.name, value: opt.id)).toList(),
-             fieldDecoration: FieldDecoration(labelText: "Tags", border: UnderlineInputBorder()),
-           );
-         },
-       );
-}
-
-// class OtherTagsField extends FormField<List<String>> {
-//   OtherTagsField({
-//     super.key,
-//     super.onSaved,
-//     super.validator,
-//     List<String> super.initialValue = const [],
-//     required List<Tag> options,
-//     TagsController? controller,
-//     bool autovalidate = false,
-//   }) : super(
-//          builder: (FormFieldState<List<String>> state) {
-//            return Wrap(children: options.map((opt) => TagItem(name: opt.name, id: opt.id)).toList());
-//          },
-//        );
-// }
-
-class OtherTagsField extends StatefulWidget {
+class TagsField extends StatefulWidget {
   final TagsController? controller;
   final List<Tag> options;
+  final VoidCallback? onCreateTag;
+  final bool enabled;
 
-  const OtherTagsField({super.key, required this.options, this.controller, bool autovalidate = false});
+  const TagsField({
+    super.key,
+    required this.options,
+    this.controller,
+    bool autovalidate = false,
+    this.onCreateTag,
+    this.enabled = true,
+  });
 
   @override
-  State<OtherTagsField> createState() => _OtherTagsFieldState();
+  State<TagsField> createState() => _TagsFieldState();
 }
 
-class _OtherTagsFieldState extends State<OtherTagsField> {
+class _TagsFieldState extends State<TagsField> {
   late TagsController controller = widget.controller ?? TagsController();
 
   @override
@@ -68,11 +39,21 @@ class _OtherTagsFieldState extends State<OtherTagsField> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Wrap(
-          spacing: 10,
-          children: widget.options.map((opt) => TagItem(name: opt.name, id: opt.id, controller: controller)).toList(),
+        SizedBox(
+          height: 100,
+          child: SingleChildScrollView(
+            child: Wrap(
+              spacing: 10,
+              children:
+                  widget.options
+                      .map(
+                        (opt) => TagItem(name: opt.name, id: opt.id, controller: controller, enabled: widget.enabled),
+                      )
+                      .toList(),
+            ),
+          ),
         ),
-        TextButton(onPressed: () {}, child: Text("Nouveau tag")),
+        TextButton(onPressed: widget.enabled ? widget.onCreateTag : null, child: Text("Nouveau tag")),
       ],
     );
   }
@@ -82,25 +63,25 @@ class TagItem extends StatelessWidget {
   final String name;
   final String id;
   final TagsController controller;
+  final bool enabled;
 
-  const TagItem({super.key, required this.name, required this.id, required this.controller});
+  const TagItem({super.key, required this.name, required this.id, required this.controller, required this.enabled});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: enabled ? () => controller.toggle(id) : null,
       child: Chip(
         label: Text(name, style: TextStyle(color: controller.isSelected(id) ? Colors.black : Colors.grey)),
-        // avatar: controller.isSelected(id) ? CircleAvatar(child: Icon(Icons.check)) : null,
         backgroundColor: controller.isSelected(id) ? colorFromText(name) : Colors.white,
         side: BorderSide(color: colorFromText(name)),
       ),
-      onTap: () => controller.toggle(id),
     );
   }
 }
 
 class TagsController extends ChangeNotifier {
-  final Set<String> _selected = Set();
+  final Set<String> _selected = {};
 
   TagsController({Iterable<String>? selected}) {
     if (selected != null) _selected.addAll(selected);

@@ -5,8 +5,9 @@ class PlaceTypeField extends StatefulWidget {
   final PlaceTypeController? controller;
   final List<PlaceType> options;
   final bool enabled;
+  final String label;
 
-  const PlaceTypeField({super.key, this.controller, required this.options, this.enabled = true});
+  const PlaceTypeField({super.key, this.controller, required this.options, this.enabled = true, this.label = "Type"});
 
   @override
   State<PlaceTypeField> createState() => _PlaceTypeFieldState();
@@ -26,11 +27,15 @@ class _PlaceTypeFieldState extends State<PlaceTypeField> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.options);
+
+    print(widget.options.map((pt) => DropdownMenuItem(value: pt, child: Text(pt.name))).toList());
+
     return DropdownButtonFormField(
       items: widget.options.map((pt) => DropdownMenuItem(value: pt, child: Text(pt.name))).toList(),
       onChanged: widget.enabled ? (PlaceType? s) => controller.type = s : null,
       value: controller.type,
-      decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Type"),
+      decoration: InputDecoration(border: UnderlineInputBorder(), labelText: widget.label),
     );
   }
 }

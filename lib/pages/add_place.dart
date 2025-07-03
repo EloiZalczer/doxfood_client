@@ -1,4 +1,5 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/dialogs/create_tag.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/tags.dart';
@@ -28,16 +29,32 @@ class _AddPlacePageState extends State<AddPlacePage> {
   final _nameController = TextEditingController();
   final _priceController = PriceController();
   final _tagsController = MultiSelectController();
-  final _placeTypeController = PlaceTypeController();
+  late PlaceTypeController _placeTypeController;
   final _descriptionController = TextEditingController();
 
   late FocusNode _focusNode;
+
+  void _onCreateTag() async {
+    final model = context.read<TagsModel>();
+
+    final result = await CreateTagDialog.show(context, _placeTypeController.type!); // FIXME type is nullable
+
+    if (result != null) {
+      await model.create(result.placeType, result.name);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
 
     _focusNode = FocusNode();
+
+    final defaultPlaceType = context.read<PlaceTypesModel>().placeTypes.first;
+
+    _placeTypeController = PlaceTypeController(type: defaultPlaceType);
+
+    _focusNode.requestFocus();
   }
 
   @override
@@ -66,71 +83,115 @@ class _AddPlacePageState extends State<AddPlacePage> {
 
   @override
   Widget build(BuildContext context) {
-    _focusNode.requestFocus();
-
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text("Create new place")),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              spacing: 12.0,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: 100,
-                  child: IgnorePointer(
-                    child: FlutterMap(
-                      options: MapOptions(initialCenter: widget.point, initialZoom: 18),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppBar(title: Text("Create new place")),
+        body: Form(
+          key: _formKey,
+          child: SizedBox(
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: 12.0,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
                       children: [
-                        TileLayer(
-                          urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                          userAgentPackageName: "com.doxfood.app",
+                        MapPreview(point: widget.point),
+                        TextFormField(
+                          controller: _nameController,
+                          focusNode: _focusNode,
+                          keyboardType: TextInputType.text,
+                          decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Name"),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "This field is required";
+                            }
+                            return null;
+                          },
                         ),
-                        MarkerLayer(markers: [Marker(point: widget.point, child: FlutterLogo())]),
+                        Consumer<PlaceTypesModel>(
+                          builder: (context, model, child) {
+                            return PlaceTypeField(options: model.placeTypes, controller: _placeTypeController);
+                          },
+                        ),
                       ],
                     ),
                   ),
-                ),
-                TextFormField(
-                  controller: _nameController,
-                  focusNode: _focusNode,
-                  keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Name"),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "This field is required";
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _descriptionController,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  decoration: InputDecoration(hintText: "Description (optional)"),
-                ),
-                Consumer<PlaceTypesModel>(
-                  builder: (context, model, child) {
-                    return PlaceTypeField(options: model.placeTypes, controller: _placeTypeController);
-                  },
-                ),
-                Consumer<TagsModel>(
-                  builder: (context, model, child) {
-                    return OtherTagsField(options: model.tags);
-                  },
-                ),
-                Text("Price"),
-                PriceField(controller: _priceController),
-                GoogleMapsLinkField(),
-                Spacer(),
-                ElevatedButton(onPressed: _submit, child: Text("Create")),
-              ],
+
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Consumer<TagsModel>(
+                      builder: (context, model, child) {
+                        return TagsField(options: model.tags, onCreateTag: _onCreateTag);
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(children: [Text("Price"), PriceField(controller: _priceController)]),
+                  ),
+
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _descriptionController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          decoration: InputDecoration(hintText: "Description (optional)"),
+                        ),
+                        GoogleMapsLinkField(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
+        ),
+        bottomNavigationBar: Padding(
+          // Hack to keep the bottomNavigationBar displayed when the
+          // virtual keyboard shows up
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Material(
+            elevation: 15,
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: ElevatedButton(onPressed: _submit, child: Text("Create")),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MapPreview extends StatelessWidget {
+  final LatLng point;
+
+  const MapPreview({super.key, required this.point});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 100,
+      child: IgnorePointer(
+        child: FlutterMap(
+          options: MapOptions(initialCenter: point, initialZoom: 18),
+          children: [
+            TileLayer(
+              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+              userAgentPackageName: "com.doxfood.app",
+            ),
+            MarkerLayer(markers: [Marker(point: point, child: FlutterLogo())]),
+          ],
         ),
       ),
     );

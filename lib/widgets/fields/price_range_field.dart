@@ -18,6 +18,7 @@ class PriceRangeField extends FormField<PriceRange> {
     super.validator,
     required PriceRange super.initialValue,
     bool autovalidate = false,
+    bool enabled = true,
   }) : super(
          builder: (FormFieldState<PriceRange> state) {
            return RangeSlider(
@@ -26,11 +27,13 @@ class PriceRangeField extends FormField<PriceRange> {
              values: RangeValues(state.value!.min.toDouble(), state.value!.max.toDouble()),
              labels: RangeLabels(priceToLabel(state.value!.min), priceToLabel(state.value!.max)),
              divisions: 3,
-             onChanged: (RangeValues values) {
-               if (values.start == values.end) return;
-
-               state.didChange(PriceRange(min: values.start.toInt(), max: values.end.toInt()));
-             },
+             onChanged:
+                 enabled
+                     ? (RangeValues values) {
+                       if (values.start == values.end) return;
+                       state.didChange(PriceRange(min: values.start.toInt(), max: values.end.toInt()));
+                     }
+                     : null,
            );
          },
        );
