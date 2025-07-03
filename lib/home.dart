@@ -32,37 +32,42 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ChangeNotifierProvider<PlaceTypesModel>.value(value: placeTypes),
         Provider<API>.value(value: widget.api),
       ],
-      child: Navigator(
-        key: _navigatorKey,
-        onGenerateRoute: (settings) {
-          return MaterialPageRoute(
-            builder: (context) {
-              return SafeArea(
-                top: false,
-                child: Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  body: DefaultTabController(
-                    length: 2,
-                    child: Scaffold(
-                      bottomNavigationBar: TabBar(
-                        tabs: [Tab(icon: Icon(Icons.map)), Tab(icon: Icon(Icons.casino))],
-                        isScrollable: false,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        indicator: BoxDecoration(
-                          border: Border(top: BorderSide(color: Theme.of(context).hintColor, width: 3.0)),
+      child: NavigatorPopHandler(
+        onPopWithResult: (result) {
+          _navigatorKey.currentState!.maybePop(result);
+        },
+        child: Navigator(
+          key: _navigatorKey,
+          onGenerateRoute: (settings) {
+            return MaterialPageRoute(
+              builder: (context) {
+                return SafeArea(
+                  top: false,
+                  child: Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    body: DefaultTabController(
+                      length: 2,
+                      child: Scaffold(
+                        bottomNavigationBar: TabBar(
+                          tabs: [Tab(icon: Icon(Icons.map)), Tab(icon: Icon(Icons.casino))],
+                          isScrollable: false,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicator: BoxDecoration(
+                            border: Border(top: BorderSide(color: Theme.of(context).hintColor, width: 3.0)),
+                          ),
                         ),
-                      ),
-                      body: const TabBarView(
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [MapPage(), RandomPage()],
+                        body: const TabBarView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [MapPage(), RandomPage()],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
