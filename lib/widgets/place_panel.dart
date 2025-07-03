@@ -1,6 +1,5 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/places.dart';
-import 'package:doxfood/pages/add_review.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/widgets/fields/rating_field.dart';
 import 'package:doxfood/widgets/review_tile.dart';

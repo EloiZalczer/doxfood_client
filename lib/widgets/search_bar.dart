@@ -1,7 +1,5 @@
-import 'package:doxfood/models/places.dart';
 import 'package:doxfood/widgets/search_panel.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SearchField extends StatefulWidget {
   const SearchField({super.key});

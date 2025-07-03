@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:doxfood/api.dart';
 import 'package:flutter/foundation.dart';
+import 'package:latlong2/latlong.dart';
 
 import 'package:pocketbase/pocketbase.dart';
 
@@ -38,18 +39,38 @@ class PlacesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> create(Place place) async {
-    await _api.pb.collection("places").create(body: place.toRecord());
+  Future<void> createPlace({
+    required String name,
+    required LatLng location,
+    required String price,
+    required List<Tag> tags,
+    required String type,
+    String? googleMapsLink,
+    String? description,
+  }) async {
+    await _api.pb
+        .collection("places")
+        .create(
+          body: {
+            "name": name,
+            "location": {"lat": location.latitude, "lon": location.longitude},
+            "price": price,
+            "tags": tags.map((tag) => tag.id).toList(),
+            "type": type,
+            "googleMapsLink": googleMapsLink,
+            "description": description,
+          },
+        );
   }
 
   Future<List<Review>> getPlaceReviews(placeId) async {
     return await _api.getReviews(placeId);
   }
 
-  Future createReview(placeId, Review review) async {
-    print({"place": placeId, ...review.toRecord()});
-
-    await _api.pb.collection("reviews").create(body: {"place": placeId, ...review.toRecord()});
+  Future<void> createReview(String placeId, int rating, String text) async {
+    await _api.pb
+        .collection("reviews")
+        .create(body: {"place": placeId, "user": getCurrentUserId(), "rating": rating, "text": text});
 
     notifyListeners();
   }

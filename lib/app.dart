@@ -1,11 +1,8 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/home.dart';
-import 'package:doxfood/models/servers.dart';
-import 'package:doxfood/models/settings.dart';
 import 'package:doxfood/pages/servers_list.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[

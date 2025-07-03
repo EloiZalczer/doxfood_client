@@ -3,7 +3,7 @@ import "package:pocketbase/pocketbase.dart";
 
 class Place {
   Place({
-    this.id,
+    required this.id,
     required this.name,
     required this.location,
     required this.price,
@@ -13,7 +13,7 @@ class Place {
     this.description,
   });
 
-  final String? id;
+  final String id;
   final String name;
   final LatLng location;
   final String price;
@@ -35,19 +35,6 @@ class Place {
       googleMapsLink: record.get<String?>("googleMapsLink"),
       description: record.get<String?>("description"),
     );
-  }
-
-  Map<String, dynamic> toRecord() {
-    return {
-      "id": id,
-      "name": name,
-      "location": {"lat": location.latitude, "lon": location.longitude},
-      "price": price,
-      "tags": tags.map((tag) => tag.id).toList(),
-      "type": type,
-      "googleMapsLink": googleMapsLink,
-      "description": description,
-    };
   }
 
   @override
@@ -97,10 +84,6 @@ class Review {
       rating: record.get<int>("rating"),
       user: User.fromRecord(record.get<RecordModel>("expand.user")),
     );
-  }
-
-  Map<String, dynamic> toRecord() {
-    return {"id": id, "text": text, "rating": rating, "user": user.id};
   }
 
   @override

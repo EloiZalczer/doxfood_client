@@ -1,7 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
-import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/pages/map.dart';
 import 'package:doxfood/pages/random.dart';

@@ -52,15 +52,13 @@ class _AddPlacePageState extends State<AddPlacePage> {
       return;
     }
 
-    await context.read<PlacesModel>().create(
-      Place(
-        location: widget.point,
-        name: _nameController.text,
-        type: _placeTypeController.type!.id,
-        price: _pricesMap[_priceController.price!],
-        tags: _tagsController.items.map((e) => e.value as Tag).toList(),
-        description: _descriptionController.text,
-      ),
+    await context.read<PlacesModel>().createPlace(
+      location: widget.point,
+      name: _nameController.text,
+      type: _placeTypeController.type!.id,
+      price: _pricesMap[_priceController.price!],
+      tags: _tagsController.items.map((e) => e.value as Tag).toList(),
+      description: _descriptionController.text,
     );
 
     if (mounted) Navigator.pop(context);
@@ -122,7 +120,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                 ),
                 Consumer<TagsModel>(
                   builder: (context, model, child) {
-                    return TagsField(options: model.tags);
+                    return OtherTagsField(options: model.tags);
                   },
                 ),
                 Text("Price"),
