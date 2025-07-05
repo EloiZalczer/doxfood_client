@@ -38,7 +38,43 @@ class FiltersModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> create(PlaceType placeType, String name) async {
-    await _api.pb.collection("filters").create(body: {"name": name, "place_type": placeType.id});
+  Future<void> save(
+    ID? id,
+    String name,
+    bool priceRangeEnabled,
+    bool includeTagsEnabled,
+    bool excludeTagsEnabled,
+    bool includePlacesEnabled,
+    bool excludePlacesEnabled,
+    ID placeType,
+    String lowerPriceBound,
+    String upperPriceBound,
+    List<ID> includedTags,
+    List<ID> excludedTags,
+    List<ID> includedPlaces,
+    List<ID> excludedPlaces,
+  ) async {
+    Map<String, dynamic> body = {
+      "name": name,
+      "user": _api.pb.authStore.record!.get<String>("id"),
+      "priceRangeEnabled": priceRangeEnabled,
+      "includeTagsEnabled": includeTagsEnabled,
+      "excludeTagsEnabled": excludeTagsEnabled,
+      "includePlacesEnabled": includePlacesEnabled,
+      "excludePlacesEnabled": excludePlacesEnabled,
+      "placeType": placeType,
+      "lowerPriceBound": lowerPriceBound,
+      "upperPriceBound": upperPriceBound,
+      "includedTags": includedTags,
+      "excludedTags": excludedTags,
+      "includedPlaces": includedPlaces,
+      "excludedPlaces": excludedPlaces,
+    };
+
+    if (id == null) {
+      await _api.pb.collection("filters").create(body: body);
+    } else {
+      await _api.pb.collection("filters").update(id, body: body);
+    }
   }
 }

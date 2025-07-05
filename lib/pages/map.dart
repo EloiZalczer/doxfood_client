@@ -10,8 +10,12 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+typedef PageBuilder = void Function(BuildContext context, void Function(PlaceInfo place) openPlacePanel);
+
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  final PageBuilder builder;
+
+  const MapPage({super.key, required this.builder});
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -32,9 +36,17 @@ class _MapPageState extends State<MapPage> {
   }
 
   late void Function(PlaceInfo place) onPlaceTapped;
+  late void Function(PlaceInfo place) centerMapOnPlace;
+
+  void onOpenPlacePanel(PlaceInfo place) {
+    onPlaceTapped(place);
+    centerMapOnPlace(place);
+  }
 
   @override
   Widget build(BuildContext context) {
+    widget.builder.call(context, onOpenPlacePanel);
+
     return Scaffold(
       key: _key,
       endDrawer: SettingsDrawer(),
@@ -60,6 +72,9 @@ class _MapPageState extends State<MapPage> {
                 ),
             body: MapWidget(
               key: _panelKey,
+              builder: (BuildContext context, void Function(PlaceInfo place) onPlaceSelected) {
+                centerMapOnPlace = onPlaceSelected;
+              },
               onMapTapped: onMapTapped,
               onPlaceTapped: (PlaceInfo p) {
                 panelController.animatePanelToPosition(0.5);

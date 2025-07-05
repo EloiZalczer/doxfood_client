@@ -47,23 +47,15 @@ class _RatingFieldState extends State<RatingField> {
       children: List.generate(
         widget.starCount, // Generate a row with 'starCount' stars
         (final index) {
-          if (controller.rating == null || controller.rating! < index) {
+          if (controller.rating == null || controller.rating! <= index) {
             return GestureDetector(
-              child: Icon(
-                Icons.star_border,
-                size: 50,
-                color: StarColors.secondaryContainerGray,
-              ),
-              onTap: () => onStarTapped(context, index),
+              child: Icon(Icons.star_border, size: 50, color: StarColors.secondaryContainerGray),
+              onTap: () => onStarTapped(context, index + 1),
             );
           } else {
             return GestureDetector(
-              child: Icon(
-                Icons.star,
-                size: 50,
-                color: StarColors.ratingPrimaryColor,
-              ),
-              onTap: () => onStarTapped(context, index),
+              child: Icon(Icons.star, size: 50, color: StarColors.ratingPrimaryColor),
+              onTap: () => onStarTapped(context, index + 1),
             );
           }
         },

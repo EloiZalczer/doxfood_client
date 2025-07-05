@@ -1,9 +1,11 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/ext.dart';
+import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/widgets/fields/rating_field.dart';
 import 'package:doxfood/widgets/review_tile.dart';
-import 'package:doxfood/utils/color.dart';
+import 'package:doxfood/widgets/tag_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -30,20 +32,36 @@ class _PlacePanelState extends State<PlacePanel> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Stack(
             children: [
               PlacePanelHeader(place: widget.place),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade300),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.close),
+              Positioned(
+                right: 60,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade300),
+                  child: IconButton(
+                    onPressed: () {
+                      print("on pressed");
+                      launchMap(widget.place.location, widget.place.name);
+                    },
+                    icon: Icon(Icons.navigation),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 10,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade300),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.close),
+                  ),
                 ),
               ),
             ],
@@ -61,23 +79,34 @@ class _PlacePanelState extends State<PlacePanel> {
             builder: (BuildContext context, AsyncSnapshot<List<Review>> reviews) {
               if (reviews.hasData) {
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ReviewsRatingWidget(reviews: reviews.data!),
-                    Divider(height: 10),
+                    Divider(height: 24),
                     if (!reviews.data!.any((review) => review.user.id == currentUserId)) ...[
                       Text("Leave a review"),
-                      RatingField(
-                        onRatingSelected: widget.onAddReview,
-                        // onRatingSelected: (int rating) {
-                        //   Navigator.of(context, rootNavigator: true).push(
-                        //     MaterialPageRoute(
-                        //       builder: (context) => AddReviewPage(rating: rating, place: widget.place.place),
-                        //     ),
-                        //   );
-                        // },
-                      ),
+                      RatingField(onRatingSelected: widget.onAddReview),
                       Divider(height: 10),
                     ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text("Sort by", style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Chip(
+                          avatar: Icon(Icons.keyboard_arrow_down),
+                          label: Text("Creation date", textAlign: TextAlign.center),
+                        ),
+                        Chip(
+                          label: SizedBox(
+                            width: MediaQuery.sizeOf(context).width * 0.38,
+                            child: Text("Rating", textAlign: TextAlign.center),
+                          ),
+                        ),
+                      ],
+                    ),
                     Expanded(
                       child: ListView.separated(
                         itemCount: reviews.data!.length,
@@ -124,11 +153,22 @@ class PlacePanelHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final placeType = context.read<PlaceTypesModel>().getById(place.type);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(place.name, textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+        Text(place.name, textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 25)),
+        SizedBox(height: 5),
         PlaceRatingWidget(place: place),
+        Row(
+          spacing: 8.0,
+          children: [
+            Text(placeType.name, style: TextStyle(color: Theme.of(context).hintColor)),
+            Text("•", style: TextStyle(color: Theme.of(context).hintColor)),
+            Text(place.price, style: TextStyle(color: Theme.of(context).hintColor)),
+          ],
+        ),
         Row(
           children: [
             Wrap(
@@ -136,16 +176,7 @@ class PlacePanelHeader extends StatelessWidget {
               spacing: 10,
               children:
                   place.tags.map((tag) {
-                    return DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: colorFromText(tag.name),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                        child: Text(tag.name),
-                      ),
-                    );
+                    return TagChip(tag: tag);
                   }).toList(),
             ),
           ],

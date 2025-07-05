@@ -1,7 +1,7 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/widgets/rating.dart';
-import 'package:doxfood/utils/color.dart';
+import 'package:doxfood/widgets/tag_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -41,16 +41,7 @@ class PlaceTile extends StatelessWidget {
                   spacing: 10,
                   children:
                       place.tags.map((tag) {
-                        return DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: colorFromText(tag.name),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-                            child: Text(tag.name),
-                          ),
-                        );
+                        return TagChip(tag: tag);
                       }).toList(),
                 ),
               ],

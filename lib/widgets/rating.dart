@@ -12,6 +12,7 @@ class PlaceRatingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       spacing: 4,
       children: [
         Text(place.averageRating.toStringAsFixed(1), style: TextStyle(color: Theme.of(context).hintColor)),

@@ -1,4 +1,3 @@
-import 'package:doxfood/api.dart';
 import 'package:doxfood/dialogs/create_tag.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
@@ -10,7 +9,6 @@ import 'package:doxfood/widgets/fields/tags_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:provider/provider.dart';
 
 const _pricesMap = ["€", "€€", "€€€", "€€€€"];
@@ -28,7 +26,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _priceController = PriceController();
-  final _tagsController = MultiSelectController();
+  final _tagsController = TagsController();
   late PlaceTypeController _placeTypeController;
   final _descriptionController = TextEditingController();
 
@@ -74,7 +72,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
       name: _nameController.text,
       type: _placeTypeController.type!.id,
       price: _pricesMap[_priceController.price!],
-      tags: _tagsController.items.map((e) => e.value as Tag).toList(),
+      tags: _tagsController.selected.toList(),
       description: _descriptionController.text,
     );
 
@@ -126,7 +124,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Consumer<TagsModel>(
                       builder: (context, model, child) {
-                        return TagsField(options: model.tags, onCreateTag: _onCreateTag);
+                        return TagsField(options: model.tags, onCreateTag: _onCreateTag, controller: _tagsController);
                       },
                     ),
                   ),

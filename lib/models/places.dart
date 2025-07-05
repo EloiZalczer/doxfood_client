@@ -43,7 +43,7 @@ class PlacesModel extends ChangeNotifier {
     required String name,
     required LatLng location,
     required String price,
-    required List<Tag> tags,
+    required List<String> tags,
     required String type,
     String? googleMapsLink,
     String? description,
@@ -55,7 +55,7 @@ class PlacesModel extends ChangeNotifier {
             "name": name,
             "location": {"lat": location.latitude, "lon": location.longitude},
             "price": price,
-            "tags": tags.map((tag) => tag.id).toList(),
+            "tags": tags,
             "type": type,
             "googleMapsLink": googleMapsLink,
             "description": description,
@@ -71,6 +71,17 @@ class PlacesModel extends ChangeNotifier {
     await _api.pb
         .collection("reviews")
         .create(body: {"place": placeId, "user": getCurrentUserId(), "rating": rating, "text": text});
+
+    final updated = await _api.pb
+        .collection("places")
+        .getOne(
+          placeId,
+          expand: "tags,reviews_via_place",
+          fields: "id, name, location, price, type, expand.tags, expand.reviews_via_place.rating",
+        );
+
+    var index = _places.indexWhere((place) => place.id == updated.get<String>("id"));
+    _places[index] = PlaceInfo.fromRecord(updated);
 
     notifyListeners();
   }

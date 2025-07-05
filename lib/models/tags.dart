@@ -41,4 +41,8 @@ class TagsModel extends ChangeNotifier {
   Future<void> create(PlaceType placeType, String name) async {
     await _api.pb.collection("tags").create(body: {"name": name, "place_type": placeType.id});
   }
+
+  Tag getById(String id) {
+    return _tags.firstWhere((pt) => pt.id == id);
+  }
 }

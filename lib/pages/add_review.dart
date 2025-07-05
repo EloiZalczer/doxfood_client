@@ -61,6 +61,7 @@ class _AddReviewPageState extends State<AddReviewPage> {
                     },
                   ),
                 ),
+                ElevatedButton.icon(onPressed: () {}, label: Text("Ajouter des photos"), icon: Icon(Icons.camera)),
                 Spacer(),
                 ElevatedButton(onPressed: _submit, child: Text("Publish")),
               ],

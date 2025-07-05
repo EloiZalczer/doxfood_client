@@ -18,7 +18,7 @@ class Place {
   final ID id;
   final String name;
   final LatLng location;
-  final String price;
+  final String price; // FIXME this shouldn't be a string
   final List<Tag> tags;
   final String type;
   final String? googleMapsLink;
@@ -43,6 +43,19 @@ class Place {
   String toString() {
     return "Place(id=$id, name=$name, location=$location, price=$price, tags=$tags, type=$type)";
   }
+
+  Map asMap() {
+    return {
+      "id": id,
+      "name": name,
+      "location": {"latitude": location.latitude, "longitude": location.longitude},
+      "price": price,
+      "tags": tags.map((tag) => {"name": tag.name, "id": tag.id}),
+      "type": type,
+      "googleMapsLink": googleMapsLink,
+      "description": description,
+    };
+  }
 }
 
 class PlaceInfo {
@@ -51,7 +64,7 @@ class PlaceInfo {
 
   PlaceInfo._(this.place, this.ratings);
 
-  ID? get id => place.id;
+  ID get id => place.id;
   String get name => place.name;
   LatLng get location => place.location;
   String get price => place.price;
@@ -134,7 +147,7 @@ class Filter {
   final bool includePlacesEnabled;
   final bool excludePlacesEnabled;
   final ID placeType;
-  final String lowerPriceBound;
+  final String lowerPriceBound; // FIXME using strings here is terrible
   final String upperPriceBound;
   final List<ID> includedTags;
   final List<ID> excludedTags;

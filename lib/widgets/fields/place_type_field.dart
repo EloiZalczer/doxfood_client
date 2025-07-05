@@ -27,15 +27,14 @@ class _PlaceTypeFieldState extends State<PlaceTypeField> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.options);
-
-    print(widget.options.map((pt) => DropdownMenuItem(value: pt, child: Text(pt.name))).toList());
-
     return DropdownButtonFormField(
       items: widget.options.map((pt) => DropdownMenuItem(value: pt, child: Text(pt.name))).toList(),
       onChanged: widget.enabled ? (PlaceType? s) => controller.type = s : null,
       value: controller.type,
       decoration: InputDecoration(border: UnderlineInputBorder(), labelText: widget.label),
+      validator: (value) {
+        if (value == null) return "This field is required";
+      },
     );
   }
 }
