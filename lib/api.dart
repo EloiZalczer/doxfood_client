@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:latlong2/latlong.dart";
 import "package:pocketbase/pocketbase.dart";
 
@@ -108,18 +110,20 @@ class Review {
 }
 
 class User {
-  User({required this.id, required this.username});
+  User({required this.id, required this.username, this.avatar});
 
   final ID id;
   final String username;
+  final Uri? avatar;
 
   factory User.fromRecord(RecordModel record) {
-    return User(id: record.get<ID>("id"), username: record.get<String>("username"));
+    print(record);
+    return User(id: record.get<ID>("id"), username: record.get<String>("username"), avatar: record.get<Uri?>("avatar"));
   }
 
   @override
   String toString() {
-    return "User(id=$id, username=$username)";
+    return "User(id=$id, username=$username, avatar=$avatar)";
   }
 }
 
@@ -212,6 +216,17 @@ class PlaceType {
   }
 }
 
+class ServerInfo {
+  ServerInfo({required this.id, required this.description});
+
+  final ID id;
+  final String description;
+
+  factory ServerInfo.fromRecord(RecordModel record) {
+    return ServerInfo(id: record.get<ID>("id"), description: record.get<String>("description"));
+  }
+}
+
 class ConnectionFailed implements Exception {}
 
 class API {
@@ -277,6 +292,8 @@ class API {
         .collection("reviews")
         .getFullList(filter: _pb.filter("place ~ {:id}", {"id": placeId}), expand: "user", sort: "-created");
 
+    // FIXME need to get users from public_users
+
     return reviews.map((record) {
       return Review.fromRecord(record);
     }).toList();
@@ -304,5 +321,34 @@ class API {
     return tags.map((record) {
       return PlaceType.fromRecord(record);
     }).toList();
+  }
+
+  Future<ServerInfo> getServerInfo() async {
+    return _pb.collection("server").getList(perPage: 1).then((result) {
+      if (result.items.isEmpty) {
+        throw ConnectionFailed();
+      }
+      return ServerInfo.fromRecord(result.items[0]);
+    });
+  }
+
+  Future<List<User>> getPublicUsers() async {
+    return _pb.collection("public_users").getFullList().then((result) {
+      if (result.isEmpty) {
+        throw ConnectionFailed();
+      }
+
+      return result.map((r) {
+        final avatarFile = r.get<String?>("avatar");
+
+        Uri? avatarUrl;
+
+        if (avatarFile != null) {
+          avatarUrl = _pb.files.getURL(r, avatarFile);
+        }
+
+        return User(id: r.get<ID>("id"), username: r.get<String>("username"), avatar: avatarUrl);
+      }).toList();
+    });
   }
 }

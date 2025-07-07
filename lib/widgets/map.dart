@@ -53,12 +53,10 @@ class _MapWidgetState extends State<MapWidget> {
               markers:
                   model.places.map((PlaceInfo place) {
                     return Marker(
+                      width: 20,
+                      height: 20,
                       point: place.location,
-                      child: PlaceMarker(
-                        place: place.place,
-                        onTap: () => widget.onPlaceTapped(place),
-                        child: FlutterLogo(),
-                      ),
+                      child: PlaceMarker(place: place.place, onTap: () => widget.onPlaceTapped(place)),
                     );
                   }).toList(),
             );
@@ -66,5 +64,14 @@ class _MapWidgetState extends State<MapWidget> {
         ),
       ],
     );
+  }
+}
+
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }

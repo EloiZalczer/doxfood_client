@@ -78,6 +78,7 @@ class _MapPageState extends State<MapPage> {
               onMapTapped: onMapTapped,
               onPlaceTapped: (PlaceInfo p) {
                 panelController.animatePanelToPosition(0.5);
+                centerMapOnPlace(p);
                 onPlaceTapped(p);
               },
             ),

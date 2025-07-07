@@ -17,6 +17,7 @@ class FiltersListPage extends StatelessWidget {
             itemCount: value.filters.length,
             itemBuilder: (context, index) {
               return FilterTile(
+                filter: value.filters[index],
                 onTap: () {
                   Navigator.of(
                     context,

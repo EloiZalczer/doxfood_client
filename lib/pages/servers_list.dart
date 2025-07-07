@@ -2,6 +2,7 @@ import 'package:doxfood/api.dart';
 import 'package:doxfood/pages/add_server.dart';
 import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/settings.dart';
+import 'package:doxfood/pages/server_details.dart';
 import 'package:doxfood/widgets/loader_overlay.dart';
 import 'package:doxfood/widgets/server_tile.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,9 @@ class _ServersListPageState extends State<ServersListPage> {
               return ServerTile(
                 server: serversList.servers[index],
                 onTap: (server) => onServerSelected(context, server),
+                onLongPress: (server) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ServerDetailsPage(server: server)));
+                },
               );
             },
           ),

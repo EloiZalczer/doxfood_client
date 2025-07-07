@@ -1,6 +1,6 @@
 import 'package:doxfood/api.dart';
-import 'package:doxfood/utils/color.dart';
 import 'package:doxfood/widgets/rating.dart';
+import 'package:doxfood/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
 
 class ReviewTile extends StatelessWidget {
@@ -14,21 +14,7 @@ class ReviewTile extends StatelessWidget {
       shape: ContinuousRectangleBorder(side: BorderSide(color: Colors.black, width: 1)),
       title: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
-        child: Row(
-          spacing: 6,
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.blueGrey,
-              radius: 17,
-              child: CircleAvatar(
-                backgroundColor: colorFromText(review.user.username),
-                radius: 16,
-                child: Text(review.user.username[0].toUpperCase(), style: TextStyle(color: Colors.black)),
-              ),
-            ),
-            Text(review.user.username),
-          ],
-        ),
+        child: Row(spacing: 6, children: [UserAvatar(user: review.user), Text(review.user.username)]),
       ),
       subtitle: Column(
         spacing: 8,

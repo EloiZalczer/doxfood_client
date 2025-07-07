@@ -1,14 +1,11 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/ext.dart';
 import 'package:doxfood/models/place_types.dart';
-import 'package:doxfood/models/places.dart';
 import 'package:doxfood/widgets/rating.dart';
-import 'package:doxfood/widgets/fields/rating_field.dart';
-import 'package:doxfood/widgets/review_tile.dart';
+import 'package:doxfood/widgets/reviews_panel.dart';
 import 'package:doxfood/widgets/tag_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class PlacePanel extends StatefulWidget {
   final PlaceInfo place;
@@ -21,12 +18,8 @@ class PlacePanel extends StatefulWidget {
 }
 
 class _PlacePanelState extends State<PlacePanel> {
-  Future<List<Review>> _load(BuildContext context) => context.read<PlacesModel>().getPlaceReviews(widget.place.id);
-
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.read<PlacesModel>().getCurrentUserId();
-
     return Column(
       spacing: 10,
       children: [
@@ -43,7 +36,6 @@ class _PlacePanelState extends State<PlacePanel> {
                   decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade300),
                   child: IconButton(
                     onPressed: () {
-                      print("on pressed");
                       launchMap(widget.place.location, widget.place.name);
                     },
                     icon: Icon(Icons.navigation),
@@ -73,74 +65,7 @@ class _PlacePanelState extends State<PlacePanel> {
             child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [Text(widget.place.description!)]),
           ),
         Divider(height: 10),
-        Expanded(
-          child: FutureBuilder(
-            future: _load(context),
-            builder: (BuildContext context, AsyncSnapshot<List<Review>> reviews) {
-              if (reviews.hasData) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ReviewsRatingWidget(reviews: reviews.data!),
-                    Divider(height: 24),
-                    if (!reviews.data!.any((review) => review.user.id == currentUserId)) ...[
-                      Text("Leave a review"),
-                      RatingField(onRatingSelected: widget.onAddReview),
-                      Divider(height: 10),
-                    ],
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text("Sort by", style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Chip(
-                          avatar: Icon(Icons.keyboard_arrow_down),
-                          label: Text("Creation date", textAlign: TextAlign.center),
-                        ),
-                        Chip(
-                          label: SizedBox(
-                            width: MediaQuery.sizeOf(context).width * 0.38,
-                            child: Text("Rating", textAlign: TextAlign.center),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: reviews.data!.length,
-                        separatorBuilder: (context, index) {
-                          return Divider();
-                        },
-                        itemBuilder: (context, index) {
-                          return ReviewTile(review: reviews.data![index]);
-                        },
-                      ),
-                    ),
-                  ],
-                );
-              } else if (reviews.hasError) {
-                return Center(child: Text(reviews.error.toString()));
-              } else {
-                return Skeletonizer(
-                  enabled: true,
-                  child: ListView.separated(
-                    itemCount: 3,
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                    itemBuilder: (context, index) {
-                      return ReviewTile(
-                        review: Review(id: "", text: "text", rating: 0, user: User(id: "", username: "user")),
-                      );
-                    },
-                  ),
-                );
-              }
-            },
-          ),
-        ),
+        Expanded(child: ReviewsPanel(place: widget.place, onAddReview: widget.onAddReview)),
       ],
     );
   }
