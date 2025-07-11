@@ -28,7 +28,10 @@ void main() async {
 
   final Server? server = (settings.currentServer == null) ? null : serversList.getByName(settings.currentServer!);
 
-  final API? api = (server == null) ? null : await API.connectWithToken(server.uri, server.token!);
+  final API? api = (server == null) ? null : await API.connectWithToken(server.uri, server.token);
+
+  final location = LocationModel();
+  await location.init();
 
   // final location = LocationProvider();
   // await location.init();
@@ -39,6 +42,7 @@ void main() async {
         ChangeNotifierProvider<ServersListModel>.value(value: serversList),
         // ChangeNotifierProvider<LocationProvider>.value(value: location),
         Provider<Settings>.value(value: settings),
+        Provider<LocationModel>.value(value: location),
       ],
       child: App(initialAPI: api),
     ),

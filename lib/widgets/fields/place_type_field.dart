@@ -34,6 +34,7 @@ class _PlaceTypeFieldState extends State<PlaceTypeField> {
       decoration: InputDecoration(border: UnderlineInputBorder(), labelText: widget.label),
       validator: (value) {
         if (value == null) return "This field is required";
+        return null;
       },
     );
   }
