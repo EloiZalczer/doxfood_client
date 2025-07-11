@@ -1,9 +1,24 @@
-import "dart:io";
-
 import "package:latlong2/latlong.dart";
 import "package:pocketbase/pocketbase.dart";
 
 typedef ID = String;
+
+enum SortOrder { descending, ascending }
+
+class Sort {
+  String field;
+  SortOrder order;
+
+  Sort(this.field, this.order);
+
+  String toSortString() {
+    if (order == SortOrder.descending) {
+      return "-$field";
+    } else {
+      return field;
+    }
+  }
+}
 
 class Place {
   Place({
@@ -92,16 +107,7 @@ class Review {
   final ID id;
   final String text;
   final int rating;
-  final User user;
-
-  factory Review.fromRecord(RecordModel record) {
-    return Review(
-      id: record.get<ID>("id"),
-      text: record.get<String>("text"),
-      rating: record.get<int>("rating"),
-      user: User.fromRecord(record.get<RecordModel>("expand.user")),
-    );
-  }
+  final PublicUser user;
 
   @override
   String toString() {
@@ -109,17 +115,12 @@ class Review {
   }
 }
 
-class User {
-  User({required this.id, required this.username, this.avatar});
+class PublicUser {
+  PublicUser({required this.id, required this.username, this.avatar});
 
   final ID id;
   final String username;
-  final Uri? avatar;
-
-  factory User.fromRecord(RecordModel record) {
-    print(record);
-    return User(id: record.get<ID>("id"), username: record.get<String>("username"), avatar: record.get<Uri?>("avatar"));
-  }
+  final String? avatar;
 
   @override
   String toString() {
@@ -287,15 +288,44 @@ class API {
     }).toList();
   }
 
-  Future<List<Review>> getReviews(String placeId) async {
+  Future<List<Review>> getReviews(String placeId, {Sort? sort}) async {
+    // FIXME reviews reference the 'users' collection, which is not accessible
+    // to other users for confidentiality reasons. We get the user name and
+    // avatar from the public_users view instead, but pocketbase doesn't allow
+    // this kind of joins through the web API. Therefore, we have to perform two
+    // requests (one to get reviews, the other one to get users), and then
+    // reconcile them together. A better solution would be welcome, but it does
+    // not seem to exist.
+    // https://github.com/pocketbase/pocketbase/discussions/4188
+
+    final String? sortParam = (sort != null) ? sort.toSortString() : null;
+
     final reviews = await _pb
         .collection("reviews")
-        .getFullList(filter: _pb.filter("place ~ {:id}", {"id": placeId}), expand: "user", sort: "-created");
+        .getFullList(filter: _pb.filter("place ~ {:id}", {"id": placeId}), sort: sortParam);
 
-    // FIXME need to get users from public_users
+    final userIds = reviews.map((record) => record.get<String>("user"));
+
+    final filter = userIds.map((e) => "id = '$e'").join(" || ");
+
+    final users = await _pb.collection("public_users").getFullList(filter: filter);
+
+    final Map<String, PublicUser> usersMap = {
+      for (var v in users)
+        v.get<String>("id"): PublicUser(
+          id: v.get<ID>("id"),
+          username: v.get<String>("username"),
+          avatar: v.get<String?>("avatar"),
+        ),
+    };
 
     return reviews.map((record) {
-      return Review.fromRecord(record);
+      return Review(
+        id: record.get<ID>("id"),
+        text: record.get<String>("text"),
+        rating: record.get<int>("rating"),
+        user: usersMap[record.get("user")]!,
+      );
     }).toList();
   }
 
@@ -332,23 +362,27 @@ class API {
     });
   }
 
-  Future<List<User>> getPublicUsers() async {
+  Future<List<PublicUser>> getPublicUsers() async {
     return _pb.collection("public_users").getFullList().then((result) {
       if (result.isEmpty) {
         throw ConnectionFailed();
       }
 
       return result.map((r) {
-        final avatarFile = r.get<String?>("avatar");
-
-        Uri? avatarUrl;
-
-        if (avatarFile != null) {
-          avatarUrl = _pb.files.getURL(r, avatarFile);
-        }
-
-        return User(id: r.get<ID>("id"), username: r.get<String>("username"), avatar: avatarUrl);
+        return PublicUser(id: r.get<ID>("id"), username: r.get<String>("username"), avatar: r.get<String?>("avatar"));
       }).toList();
     });
+  }
+
+  Uri? getAvatarURL(PublicUser user) {
+    if (user.avatar == null || user.avatar!.isEmpty) return null;
+
+    return _pb.buildURL(
+      "/api/files/${Uri.encodeComponent("public_users")}/${Uri.encodeComponent(user.id)}/${Uri.encodeComponent(user.avatar!)}",
+    );
+  }
+
+  String getCurrentUserId() {
+    return _pb.authStore.record!.get<String>("id");
   }
 }

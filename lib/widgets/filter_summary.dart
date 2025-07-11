@@ -40,14 +40,14 @@ class FilterSummary extends StatelessWidget {
   Widget _buildIncludedPlaces() {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [Text(filter.includedPlaces.length.toString()), Icon(Icons.restaurant)],
+      children: [Text(filter.includedPlaces.length.toString()), Icon(Icons.location_on)],
     );
   }
 
   Widget _buildExcludedPlaces() {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [Text(filter.excludedPlaces.length.toString()), Icon(Icons.no_meals)],
+      children: [Text(filter.excludedPlaces.length.toString()), Icon(Icons.location_off)],
     );
   }
 

@@ -43,11 +43,7 @@ class _PanelWidgetState extends State<PanelWidget> {
   }
 
   void togglePanel() {
-    widget
-            .panelController
-            .isPanelOpen // FIXME why is the panel never open ??
-        ? widget.panelController.close()
-        : widget.panelController.open();
+    widget.panelController.isPanelOpen ? widget.panelController.close() : widget.panelController.open();
   }
 
   Widget buildDragHandle() {

@@ -89,13 +89,13 @@ class ReviewsRatingWidget extends StatelessWidget {
 
     final Map<int, int> counts = {};
 
-    reviews.forEach((review) {
+    for (final review in reviews) {
       if (counts.containsKey(review.rating)) {
         counts.update(review.rating, (value) => value + 1);
       } else {
         counts[review.rating] = 1;
       }
-    });
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

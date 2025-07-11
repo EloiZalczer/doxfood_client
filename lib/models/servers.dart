@@ -34,33 +34,41 @@ class ServersListModel extends ChangeNotifier {
     return _servers.cast<Server?>().firstWhere((e) => e!.name == name, orElse: () => null);
   }
 
-  Future<void> add(Server server) async {
-    await _db.insert("servers", server.toRecord());
+  Future<void> add(String name, String uri, String token) async {
+    final id = await _db.insert("servers", {"name": name, "uri": uri, "token": token});
+    final server = Server(id: id, name: name, uri: uri, token: token);
     _servers.add(server);
     notifyListeners();
   }
 
-  Future<void> remove(Server server) async {
-    await _db.delete("servers", where: "id = ?", whereArgs: [server.id]);
-    _servers.remove(server);
+  Future<void> remove(int id) async {
+    await _db.delete("servers", where: "id = ?", whereArgs: [id]);
+    _servers.removeWhere((Server s) => s.id == id);
+    notifyListeners();
+  }
+
+  Future<void> update(int id, String name, String uri, String token) async {
+    await _db.update("servers", {"name": name, "uri": uri, "token": token}, where: "id = ?", whereArgs: [id]);
+    final index = _servers.indexWhere((Server s) => s.id == id);
+    _servers[index] = Server(id: id, name: name, uri: uri, token: token);
     notifyListeners();
   }
 }
 
 class Server {
-  Server({this.id, required this.name, required this.uri, this.token});
+  Server({required this.id, required this.name, required this.uri, required this.token});
 
-  final int? id;
+  final int id;
   final String name;
   final String uri;
-  final String? token;
+  final String token;
 
   factory Server.fromRecord(Map<String, Object?> record) {
     return Server(
       id: record["id"] as int,
       name: record["name"] as String,
       uri: record["uri"] as String,
-      token: record["token"] as String?,
+      token: record["token"] as String,
     );
   }
 

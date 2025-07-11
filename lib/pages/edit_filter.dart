@@ -1,4 +1,5 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/dialogs/confirm_delete_filter.dart';
 import 'package:doxfood/models/filters.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
@@ -37,6 +38,17 @@ class _EditFilterPageState extends State<EditFilterPage> {
 
   final MultiSelectController<PlaceInfo> _includedPlacesController = MultiSelectController<PlaceInfo>();
   final MultiSelectController<PlaceInfo> _excludedPlacesController = MultiSelectController<PlaceInfo>();
+
+  void _onDelete(BuildContext context) async {
+    if (widget.filter == null) return;
+
+    final result = await ConfirmDeleteFilterDialog.show(context, widget.filter!);
+
+    if (result == true && context.mounted) {
+      context.read<FiltersModel>().delete(widget.filter!.id);
+      Navigator.of(context).pop();
+    }
+  }
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) {
@@ -97,7 +109,12 @@ class _EditFilterPageState extends State<EditFilterPage> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        appBar: AppBar(title: FilterNameField(controller: _filterNameController)),
+        appBar: AppBar(
+          title: FilterNameField(controller: _filterNameController),
+          actions: [
+            if (widget.filter != null) IconButton(onPressed: () => _onDelete(context), icon: Icon(Icons.delete)),
+          ],
+        ),
         body: Center(
           child: SingleChildScrollView(
             child: Column(

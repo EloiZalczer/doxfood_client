@@ -1,4 +1,5 @@
 import 'package:doxfood/models/servers.dart';
+import 'package:doxfood/utils/validators.dart';
 import 'package:doxfood/widgets/fields/password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -71,8 +72,7 @@ class _AddServerPageState extends State<AddServerPage> {
     }
 
     if (pb.authStore.isValid) {
-      final server = Server(name: _nameController.text, uri: _urlController.text, token: pb.authStore.token);
-      await serversList.add(server);
+      await serversList.add(_nameController.text, _urlController.text, pb.authStore.token);
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -116,8 +116,7 @@ class _AddServerPageState extends State<AddServerPage> {
     }
 
     if (pb.authStore.isValid) {
-      final server = Server(name: _nameController.text, uri: _urlController.text, token: pb.authStore.token);
-      await serversList.add(server);
+      await serversList.add(_nameController.text, _urlController.text, pb.authStore.token);
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -168,17 +167,13 @@ class _AddServerPageState extends State<AddServerPage> {
                   controller: _urlController,
                   keyboardType: TextInputType.text,
                   decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "URL"),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "This field is required";
-                    }
-                    return null;
-                  },
+                  validator: validateRequired,
                 ),
                 TextFormField(
                   controller: _nameController,
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Name (Optional)"),
+                  decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Name"),
+                  validator: validateRequired,
                 ),
                 if (_mode != null) ...[
                   TextFormField(
@@ -186,36 +181,23 @@ class _AddServerPageState extends State<AddServerPage> {
                     controller: _usernameController,
                     keyboardType: TextInputType.text,
                     decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Username"),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "This field is required";
-                      }
-                      return null;
-                    },
+                    validator: validateRequired,
                   ),
 
-                  PasswordField(
-                    controller: _passwordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "This field is required";
-                      }
-                      return null;
-                    },
-                  ),
+                  PasswordField(controller: _passwordController, validator: validateRequired),
                 ],
                 if (_mode == _LoginMode.register) ...[
-                  TextFormField(
+                  PasswordField(
                     controller: _confirmPasswordController,
-                    keyboardType: TextInputType.text,
-                    obscureText: true,
-                    decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Confirm password"),
-                    validator: (value) {
+                    validator: (String? value) {
                       if (value == null || value.isEmpty) {
                         return "This field is required";
+                      } else if (value != _passwordController.text) {
+                        return "Passwords do not match";
                       }
                       return null;
                     },
+                    labelText: "Confirm password",
                   ),
                 ],
                 Spacer(),

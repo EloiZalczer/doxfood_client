@@ -26,31 +26,38 @@ class _ServersListPageState extends State<ServersListPage> {
       _loading = true;
     });
 
-    final API api = await API.connectWithToken(s.uri, s.token!);
+    final API api = await API.connectWithToken(s.uri, s.token);
 
-    print("continue");
-
-    GoRouter.of(context).go("/home", extra: api);
-
-    Navigator.of(context).pop();
+    if (context.mounted) {
+      GoRouter.of(context).go("/home", extra: api);
+      Navigator.of(context).pop();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var serversList = context.watch<ServersListModel>();
+    final current = context.read<Settings>().currentServer;
 
     return Stack(
       children: [
         Scaffold(
           appBar: AppBar(title: Text("Servers")),
-          body: ListView.builder(
-            itemCount: serversList.servers.length,
-            itemBuilder: (context, index) {
-              return ServerTile(
-                server: serversList.servers[index],
-                onTap: (server) => onServerSelected(context, server),
-                onLongPress: (server) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ServerDetailsPage(server: server)));
+          body: Consumer<ServersListModel>(
+            builder: (context, value, child) {
+              return ListView.builder(
+                itemCount: value.servers.length,
+                itemBuilder: (context, index) {
+                  return ServerTile(
+                    isCurrent: current == value.servers[index].name,
+                    server: value.servers[index],
+                    onTap: (server) => onServerSelected(context, server),
+                    onLongPress: (server) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ServerDetailsPage(server: server)),
+                      );
+                    },
+                  );
                 },
               );
             },

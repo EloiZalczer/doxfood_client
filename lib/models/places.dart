@@ -63,14 +63,14 @@ class PlacesModel extends ChangeNotifier {
         );
   }
 
-  Future<List<Review>> getPlaceReviews(placeId) async {
-    return await _api.getReviews(placeId);
+  Future<List<Review>> getPlaceReviews(placeId, {Sort? sort}) async {
+    return await _api.getReviews(placeId, sort: sort);
   }
 
   Future<void> createReview(String placeId, int rating, String text) async {
     await _api.pb
         .collection("reviews")
-        .create(body: {"place": placeId, "user": getCurrentUserId(), "rating": rating, "text": text});
+        .create(body: {"place": placeId, "user": _api.getCurrentUserId(), "rating": rating, "text": text});
 
     final updated = await _api.pb
         .collection("places")
@@ -84,9 +84,5 @@ class PlacesModel extends ChangeNotifier {
     _places[index] = PlaceInfo.fromRecord(updated);
 
     notifyListeners();
-  }
-
-  String getCurrentUserId() {
-    return _api.pb.authStore.record!.get<String>("id");
   }
 }

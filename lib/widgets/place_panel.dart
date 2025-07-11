@@ -94,17 +94,14 @@ class PlacePanelHeader extends StatelessWidget {
             Text(place.price, style: TextStyle(color: Theme.of(context).hintColor)),
           ],
         ),
-        Row(
-          children: [
-            Wrap(
-              alignment: WrapAlignment.start,
-              spacing: 10,
-              children:
-                  place.tags.map((tag) {
-                    return TagChip(tag: tag);
-                  }).toList(),
-            ),
-          ],
+        Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 10,
+          runSpacing: 10,
+          children:
+              place.tags.map((tag) {
+                return TagChip(tag: tag);
+              }).toList(),
         ),
       ],
     );

@@ -1,8 +1,10 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/models/location.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/widgets/marker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
@@ -62,6 +64,7 @@ class _MapWidgetState extends State<MapWidget> {
             );
           },
         ),
+        CurrentLocationLayer(),
       ],
     );
   }

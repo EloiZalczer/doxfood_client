@@ -1,13 +1,18 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/dialogs/confirm_remove_server.dart';
 import 'package:doxfood/models/servers.dart';
+import 'package:doxfood/models/settings.dart';
+import 'package:doxfood/pages/edit_server.dart';
 import 'package:doxfood/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ServerDisconnected implements Exception {}
 
 class _ServerDetails {
   final ServerInfo info;
-  final List<User> users;
+  final List<PublicUser> users;
 
   _ServerDetails(this.info, this.users);
 }
@@ -18,27 +23,47 @@ class ServerDetailsPage extends StatelessWidget {
   const ServerDetailsPage({super.key, required this.server});
 
   Future<_ServerDetails> _load() async {
-    if (server.token == null) {
-      throw ServerDisconnected();
-    } else {
-      final api = await API.connectWithToken(server.uri, server.token!);
-      final info = await api.getServerInfo();
-      final users = await api.getPublicUsers();
+    final api = await API.connectWithToken(server.uri, server.token);
+    final info = await api.getServerInfo();
+    final users = await api.getPublicUsers();
 
-      return _ServerDetails(info, users);
+    return _ServerDetails(info, users);
+  }
+
+  void _onEdit(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditServerPage(server: server)));
+  }
+
+  void _onDelete(BuildContext context) async {
+    final result = await ConfirmRemoveServerDialog.show(context, server);
+
+    if (result == true && context.mounted) {
+      final serversList = context.read<ServersListModel>();
+      final settings = context.read<Settings>();
+
+      serversList.remove(server.id);
+
+      if (settings.currentServer == server.name) {
+        settings.currentServer = null;
+        GoRouter.of(context).go("/servers");
+      } else {
+        Navigator.of(context).pop();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final you = context.read<API>().getCurrentUserId();
+
     return SafeArea(
       top: false,
       child: Scaffold(
         appBar: AppBar(
           title: Text(server.name),
           actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.delete)),
+            IconButton(onPressed: () => _onEdit(context), icon: Icon(Icons.edit)),
+            IconButton(onPressed: () => _onDelete(context), icon: Icon(Icons.delete)),
           ],
         ),
         body: FutureBuilder(
@@ -66,6 +91,7 @@ class ServerDetailsPage extends StatelessWidget {
                         return ListTile(
                           leading: UserAvatar(user: user),
                           title: Text(snapshot.data!.users[index].username),
+                          trailing: (user.id == you) ? Text("You") : null,
                         );
                       },
                     ),

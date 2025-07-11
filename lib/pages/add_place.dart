@@ -2,6 +2,7 @@ import 'package:doxfood/dialogs/create_tag.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/tags.dart';
+import 'package:doxfood/utils/validators.dart';
 import 'package:doxfood/widgets/fields/gmaps_link_field.dart';
 import 'package:doxfood/widgets/fields/place_type_field.dart';
 import 'package:doxfood/widgets/fields/price_field.dart';
@@ -103,12 +104,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                           focusNode: _focusNode,
                           keyboardType: TextInputType.text,
                           decoration: const InputDecoration(border: UnderlineInputBorder(), labelText: "Name"),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "This field is required";
-                            }
-                            return null;
-                          },
+                          validator: validateRequired,
                         ),
                         Consumer<PlaceTypesModel>(
                           builder: (context, model, child) {

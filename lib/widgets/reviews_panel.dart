@@ -7,10 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-enum _SortedBy { rating, date }
-
-enum _SortOrder { descending, ascending }
-
 class ReviewsPanel extends StatefulWidget {
   final PlaceInfo place;
   final Function(int rating)? onAddReview;
@@ -22,17 +18,19 @@ class ReviewsPanel extends StatefulWidget {
 }
 
 class _ReviewsPanelState extends State<ReviewsPanel> {
-  Future<List<Review>> _load(BuildContext context) => context.read<PlacesModel>().getPlaceReviews(widget.place.id);
+  String _sortedBy = "created";
+  SortOrder _sortOrder = SortOrder.descending;
 
-  _SortedBy _sortedBy = _SortedBy.date;
-  _SortOrder _sortOrder = _SortOrder.descending;
+  Future<List<Review>> _load(BuildContext context, String field, SortOrder order) {
+    return context.read<PlacesModel>().getPlaceReviews(widget.place.id, sort: Sort(field, order));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId = context.read<PlacesModel>().getCurrentUserId();
+    final currentUserId = context.read<API>().getCurrentUserId();
 
     return FutureBuilder(
-      future: _load(context),
+      future: _load(context, _sortedBy, _sortOrder),
       builder: (BuildContext context, AsyncSnapshot<List<Review>> reviews) {
         if (reviews.hasData) {
           return Column(
@@ -41,7 +39,7 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
               ReviewsRatingWidget(reviews: reviews.data!),
               Divider(height: 24),
               if (!reviews.data!.any((review) => review.user.id == currentUserId)) ...[
-                Text("Leave a review"),
+                Center(child: Text("Leave a review")),
                 RatingField(onRatingSelected: widget.onAddReview),
                 Divider(height: 10),
               ],
@@ -54,8 +52,8 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
                 children: [
                   InputChip(
                     avatar:
-                        (_sortedBy == _SortedBy.date)
-                            ? (_sortOrder == _SortOrder.descending)
+                        (_sortedBy == "created")
+                            ? (_sortOrder == SortOrder.descending)
                                 ? Icon(Icons.keyboard_arrow_down)
                                 : Icon(Icons.keyboard_arrow_up)
                             : null,
@@ -65,20 +63,20 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
                     ),
                     onPressed: () {
                       setState(() {
-                        _sortedBy = _SortedBy.date;
+                        _sortedBy = "created";
                         _sortOrder =
-                            (_sortedBy == _SortedBy.rating)
-                                ? _SortOrder.descending
-                                : (_sortOrder == _SortOrder.ascending)
-                                ? _SortOrder.descending
-                                : _SortOrder.ascending;
+                            (_sortedBy == "rating")
+                                ? SortOrder.descending
+                                : (_sortOrder == SortOrder.ascending)
+                                ? SortOrder.descending
+                                : SortOrder.ascending;
                       });
                     },
                   ),
                   InputChip(
                     avatar:
-                        (_sortedBy == _SortedBy.rating)
-                            ? (_sortOrder == _SortOrder.descending)
+                        (_sortedBy == "rating")
+                            ? (_sortOrder == SortOrder.descending)
                                 ? Icon(Icons.keyboard_arrow_down)
                                 : Icon(Icons.keyboard_arrow_up)
                             : null,
@@ -88,13 +86,13 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
                     ),
                     onPressed: () {
                       setState(() {
-                        _sortedBy = _SortedBy.rating;
+                        _sortedBy = "rating";
                         _sortOrder =
-                            (_sortedBy == _SortedBy.date)
-                                ? _SortOrder.descending
-                                : (_sortOrder == _SortOrder.ascending)
-                                ? _SortOrder.descending
-                                : _SortOrder.ascending;
+                            (_sortedBy == "created")
+                                ? SortOrder.descending
+                                : (_sortOrder == SortOrder.ascending)
+                                ? SortOrder.descending
+                                : SortOrder.ascending;
                       });
                     },
                   ),
@@ -125,7 +123,12 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
               },
               itemBuilder: (context, index) {
                 return ReviewTile(
-                  review: Review(id: "", text: "text", rating: 0, user: User(id: "", username: "user", avatar: null)),
+                  review: Review(
+                    id: "",
+                    text: "text",
+                    rating: 0,
+                    user: PublicUser(id: "", username: "user", avatar: null),
+                  ),
                 );
               },
             ),

@@ -1,5 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/app.dart';
+import 'package:doxfood/models/location.dart';
 import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/settings.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,6 @@ void main() async {
   ServersListModel serversList = await ServersListModel.open();
   await serversList.load();
 
-  // serversList.add(Server(name: "Test", uri: "https://doxfood-server.zalczer.fr"));
-
   Settings settings = await Settings.load();
 
   settings.currentServer;
@@ -31,10 +30,14 @@ void main() async {
 
   final API? api = (server == null) ? null : await API.connectWithToken(server.uri, server.token!);
 
+  // final location = LocationProvider();
+  // await location.init();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ServersListModel>.value(value: serversList),
+        // ChangeNotifierProvider<LocationProvider>.value(value: location),
         Provider<Settings>.value(value: settings),
       ],
       child: App(initialAPI: api),

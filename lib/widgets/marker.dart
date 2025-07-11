@@ -1,5 +1,8 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/models/place_types.dart';
+import 'package:doxfood/utils/icons.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PlaceMarker extends StatefulWidget {
   final Place place;
@@ -22,7 +25,11 @@ class _PlaceMarkerState extends State<PlaceMarker> {
       },
       child: Container(
         decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.amber, border: Border.all(color: Colors.white)),
-        child: Icon(Icons.restaurant, size: 10, color: Colors.white),
+        child: Consumer<PlaceTypesModel>(
+          builder: (context, value, child) {
+            return Icon(iconsMap[value.getById(widget.place.type).icon], size: 10, color: Colors.white);
+          },
+        ),
       ),
     );
   }

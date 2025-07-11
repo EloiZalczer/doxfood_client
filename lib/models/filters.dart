@@ -77,4 +77,8 @@ class FiltersModel extends ChangeNotifier {
       await _api.pb.collection("filters").update(id, body: body);
     }
   }
+
+  Future<void> delete(ID id) async {
+    await _api.pb.collection("filters").delete(id);
+  }
 }

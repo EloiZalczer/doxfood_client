@@ -16,7 +16,7 @@ class AddReviewPage extends StatefulWidget {
 
 class _AddReviewPageState extends State<AddReviewPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late RatingController _ratingController = RatingController(rating: widget.rating);
+  late final RatingController _ratingController = RatingController(rating: widget.rating);
   final TextEditingController _textController = TextEditingController();
 
   void _submit() async {
