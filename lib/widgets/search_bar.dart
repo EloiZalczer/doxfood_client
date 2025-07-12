@@ -1,8 +1,11 @@
+import 'package:doxfood/api.dart';
 import 'package:doxfood/widgets/search_panel.dart';
 import 'package:flutter/material.dart';
 
 class SearchField extends StatefulWidget {
-  const SearchField({super.key});
+  final Function(PlaceInfo place)? onPlaceSelected;
+
+  const SearchField({super.key, this.onPlaceSelected});
 
   @override
   State<SearchField> createState() => _SearchFieldState();
@@ -13,6 +16,17 @@ class _SearchFieldState extends State<SearchField> {
   double textFieldPadding = 10.0;
   double borderRadius = 18.0;
   TextEditingController controller = TextEditingController();
+
+  void _onSearch() async {
+    final result = await Navigator.push<PlaceInfo?>(
+      context,
+      MaterialPageRoute(builder: (context) => SearchPanel(controller: controller)),
+    );
+
+    if (result != null && widget.onPlaceSelected != null) {
+      widget.onPlaceSelected!(result);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +45,7 @@ class _SearchFieldState extends State<SearchField> {
             controller: controller,
             readOnly: true,
             textInputAction: TextInputAction.search,
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPanel(controller: controller)));
-            },
+            onTap: _onSearch,
             style: TextStyle(height: 0.6),
             cursorHeight: 20,
             // showCursor: false,

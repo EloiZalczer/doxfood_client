@@ -71,14 +71,14 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  void onOpenPlacePanel(PlaceInfo place) {
+  void onPlaceSelected(PlaceInfo place) {
     onPlaceTapped(place);
     _centerMapOnPlace(place);
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.builder.call(context, onOpenPlacePanel);
+    widget.builder.call(context, onPlaceSelected);
 
     final panelHeightOpen = MediaQuery.of(context).size.height * 0.75;
     final panelHeightClosed = MediaQuery.of(context).size.height * 0.15;
@@ -162,7 +162,7 @@ class _MapPageState extends State<MapPage> {
                     icon: Icon(Icons.public),
                   ),
                 ),
-                const Expanded(child: Center(child: SearchField())),
+                Expanded(child: Center(child: SearchField(onPlaceSelected: onPlaceSelected))),
                 Container(
                   height: 40,
                   decoration: BoxDecoration(
