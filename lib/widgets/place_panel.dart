@@ -1,6 +1,8 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/ext.dart';
+import 'package:doxfood/models/location.dart';
 import 'package:doxfood/models/place_types.dart';
+import 'package:doxfood/utils/distance.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/widgets/reviews_panel.dart';
 import 'package:doxfood/widgets/tag_chip.dart';
@@ -79,6 +81,7 @@ class PlacePanelHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final placeType = context.read<PlaceTypesModel>().getById(place.type);
+    final location = context.read<LocationModel>().current;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,6 +95,13 @@ class PlacePanelHeader extends StatelessWidget {
             Text(placeType.name, style: TextStyle(color: Theme.of(context).hintColor)),
             Text("•", style: TextStyle(color: Theme.of(context).hintColor)),
             Text(place.price, style: TextStyle(color: Theme.of(context).hintColor)),
+            if (location != null) ...[
+              Text("•", style: TextStyle(color: Theme.of(context).hintColor)),
+              Text(
+                "${distanceBetween(location.latLng, place.location).toStringAsFixed(2)} km",
+                style: TextStyle(color: Theme.of(context).hintColor),
+              ),
+            ],
           ],
         ),
         Wrap(
