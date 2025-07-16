@@ -72,7 +72,7 @@ class _AddServerPageState extends State<AddServerPage> {
     }
 
     if (pb.authStore.isValid) {
-      await serversList.add(_nameController.text, _urlController.text, pb.authStore.token);
+      await serversList.add(_nameController.text, _urlController.text, _usernameController.text, pb.authStore.token);
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -116,7 +116,7 @@ class _AddServerPageState extends State<AddServerPage> {
     }
 
     if (pb.authStore.isValid) {
-      await serversList.add(_nameController.text, _urlController.text, pb.authStore.token);
+      await serversList.add(_nameController.text, _urlController.text, _usernameController.text, pb.authStore.token);
     }
 
     if (mounted) Navigator.of(context).pop();

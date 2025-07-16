@@ -62,7 +62,13 @@ class _EditServerPageState extends State<EditServerPage> {
     }
 
     if (pb.authStore.isValid) {
-      await serversList.update(widget.server.id, _nameController.text, _urlController.text, pb.authStore.token);
+      await serversList.update(
+        widget.server.id,
+        _nameController.text,
+        _urlController.text,
+        _usernameController.text,
+        pb.authStore.token,
+      );
     }
 
     if (mounted) Navigator.of(context).pop();

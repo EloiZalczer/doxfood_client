@@ -1,3 +1,4 @@
+import "package:doxfood/http_errors.dart";
 import "package:latlong2/latlong.dart";
 import "package:pocketbase/pocketbase.dart";
 
@@ -228,8 +229,6 @@ class ServerInfo {
   }
 }
 
-class ConnectionFailed implements Exception {}
-
 class API {
   final PocketBase _pb;
 
@@ -258,7 +257,7 @@ class API {
     try {
       await pb.collection("users").authWithPassword(username, password);
     } on ClientException catch (e) {
-      if (e.statusCode == 400) throw ConnectionFailed();
+      reraise(e);
     }
 
     return API._(pb);
@@ -270,7 +269,13 @@ class API {
 
     final pb = PocketBase(uri, authStore: store);
 
-    await pb.collection("users").authRefresh();
+    print(token);
+
+    try {
+      await pb.collection("users").authRefresh();
+    } on ClientException catch (e) {
+      reraise(e);
+    }
 
     return API._(pb);
   }
@@ -356,7 +361,7 @@ class API {
   Future<ServerInfo> getServerInfo() async {
     return _pb.collection("server").getList(perPage: 1).then((result) {
       if (result.items.isEmpty) {
-        throw ConnectionFailed();
+        throw BadRequest();
       }
       return ServerInfo.fromRecord(result.items[0]);
     });
@@ -365,7 +370,7 @@ class API {
   Future<List<PublicUser>> getPublicUsers() async {
     return _pb.collection("public_users").getFullList().then((result) {
       if (result.isEmpty) {
-        throw ConnectionFailed();
+        throw BadRequest();
       }
 
       return result.map((r) {

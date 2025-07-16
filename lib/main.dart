@@ -1,5 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/app.dart';
+import 'package:doxfood/http_errors.dart';
 import 'package:doxfood/models/location.dart';
 import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/settings.dart';
@@ -24,17 +25,23 @@ void main() async {
 
   Settings settings = await Settings.load();
 
-  settings.currentServer;
-
   final Server? server = (settings.currentServer == null) ? null : serversList.getByName(settings.currentServer!);
 
-  final API? api = (server == null) ? null : await API.connectWithToken(server.uri, server.token);
+  API? api;
+
+  if (server == null) {
+    api = null;
+  } else {
+    try {
+      api = await API.connectWithToken(server.uri, server.token);
+    } on Unauthorized {
+      api = null;
+      settings.currentServer = null;
+    }
+  }
 
   final location = LocationModel();
   await location.init();
-
-  // final location = LocationProvider();
-  // await location.init();
 
   runApp(
     MultiProvider(

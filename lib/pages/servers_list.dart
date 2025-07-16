@@ -1,4 +1,6 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/dialogs/connection_expired.dart';
+import 'package:doxfood/http_errors.dart';
 import 'package:doxfood/pages/add_server.dart';
 import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/settings.dart';
@@ -22,11 +24,36 @@ class _ServersListPageState extends State<ServersListPage> {
   void onServerSelected(BuildContext context, Server s) async {
     context.read<Settings>().currentServer = s.name;
 
+    final servers = context.read<ServersListModel>();
+
     setState(() {
       _loading = true;
     });
 
-    final API api = await API.connectWithToken(s.uri, s.token);
+    API? api;
+
+    try {
+      api = await API.connectWithToken(s.uri, s.token);
+    } on Unauthorized {
+      while (true) {
+        final password = await ConnectionExpiredDialog.show(context, s);
+        if (password == null) {
+          setState(() {
+            _loading = false;
+          });
+          return;
+        }
+
+        try {
+          api = await API.connectWithPassword(s.uri, s.username, password);
+        } on Unauthorized {
+          continue;
+        }
+
+        servers.update(s.id, s.name, s.uri, s.username, api.pb.authStore.token);
+        break;
+      }
+    }
 
     if (context.mounted) {
       GoRouter.of(context).go("/home", extra: api);
