@@ -1,5 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/places.dart';
+import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/pages/add_review.dart';
 import 'package:doxfood/widgets/place_panel.dart';
 import 'package:doxfood/widgets/place_tile.dart';
@@ -7,14 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-typedef PanelBuilder = void Function(BuildContext context, void Function(PlaceInfo place) openPlacePanel);
-
 class PanelWidget extends StatefulWidget {
   final ScrollController controller;
   final PanelController panelController;
-  final PanelBuilder builder;
 
-  const PanelWidget({super.key, required this.controller, required this.panelController, required this.builder});
+  const PanelWidget({super.key, required this.controller, required this.panelController});
 
   @override
   State<PanelWidget> createState() => _PanelWidgetState();
@@ -23,20 +21,39 @@ class PanelWidget extends StatefulWidget {
 class _PanelWidgetState extends State<PanelWidget> {
   var navigatorKey = GlobalKey<NavigatorState>();
 
-  void openPlacePanel(PlaceInfo place) {
-    widget.panelController.animatePanelToSnapPoint();
+  @override
+  void initState() {
+    super.initState();
+    context.read<SelectionModel>().addListener(_onPlaceSelectionChanged);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    context.read<SelectionModel>().removeListener(_onPlaceSelectionChanged);
+  }
+
+  void _onPlaceSelectionChanged() {
+    final place = context.read<SelectionModel>().selected;
+
+    if (place == null) return;
+
+    if (widget.panelController.panelPosition < 0.5) {
+      widget.panelController.animatePanelToSnapPoint();
+    }
+
     navigatorKey.currentState!.push(
       PageRouteBuilder(
-        pageBuilder:
-            (context, animation, secondaryAnimation) =>
-                PlacePanel(place: place, onAddReview: (int rating) => openAddReviewPage(place, rating)),
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return PlacePanel(place: place, onAddReview: (int rating) => _openAddReviewPage(place, rating));
+        },
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),
     );
   }
 
-  void openAddReviewPage(PlaceInfo place, int rating) {
+  void _openAddReviewPage(PlaceInfo place, int rating) {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (context) => AddReviewPage(rating: rating, place: place.place)));
@@ -61,8 +78,6 @@ class _PanelWidgetState extends State<PanelWidget> {
 
   @override
   Widget build(BuildContext context) {
-    widget.builder.call(context, openPlacePanel);
-
     return Column(
       children: [
         SizedBox(height: 12),
@@ -91,10 +106,15 @@ class _PanelWidgetState extends State<PanelWidget> {
                               padding: EdgeInsets.zero,
                               itemCount: model.places.length,
                               itemBuilder: (context, index) {
-                                return PlaceTile(place: model.places[index], onPlaceTapped: openPlacePanel);
+                                return PlaceTile(
+                                  place: model.places[index],
+                                  onPlaceTapped: (PlaceInfo place) {
+                                    context.read<SelectionModel>().selected = place;
+                                  },
+                                );
                               },
                             )
-                            : Center(child: Text("No places"));
+                            : Center(child: Text("No places. Create the first one by clicking on the map !"));
                       },
                     );
                   },

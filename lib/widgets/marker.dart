@@ -7,8 +7,9 @@ import 'package:provider/provider.dart';
 class PlaceMarker extends StatefulWidget {
   final Place place;
   final Function onTap;
+  final bool selected;
 
-  const PlaceMarker({super.key, required this.place, required this.onTap});
+  const PlaceMarker({super.key, required this.place, required this.onTap, required this.selected});
 
   @override
   State<PlaceMarker> createState() => _PlaceMarkerState();
@@ -24,7 +25,11 @@ class _PlaceMarkerState extends State<PlaceMarker> {
         widget.onTap();
       },
       child: Container(
-        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.amber, border: Border.all(color: Colors.white)),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: widget.selected ? Colors.black : Colors.amber,
+          border: Border.all(color: Colors.white),
+        ),
         child: Consumer<PlaceTypesModel>(
           builder: (context, value, child) {
             return Icon(iconsMap[value.getById(widget.place.type).icon], size: 10, color: Colors.white);

@@ -31,15 +31,12 @@ class _AddServerPageState extends State<AddServerPage> {
   @override
   void initState() {
     super.initState();
-
     _focusNode = FocusNode();
   }
 
   @override
   void dispose() {
-    // Clean up the focus node when the Form is disposed.
     _focusNode.dispose();
-
     super.dispose();
   }
 

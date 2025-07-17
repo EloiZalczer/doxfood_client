@@ -2,6 +2,7 @@ import 'package:doxfood/api.dart';
 import 'package:doxfood/models/filters.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
+import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/pages/map.dart';
 import 'package:doxfood/pages/random.dart';
@@ -19,15 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
-  // final _tabControllerKey = GlobalKey<State<DefaultTabController>>();
-
-  // void onPlaceSuggestionClicked(PlaceInfo place, BuildContext context) {
-  //   print("suggestion clicked");
-
-  //   DefaultTabController.of(context).animateTo(0);
-  // }
-
-  late void Function(PlaceInfo place) openPlacePanel;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +34,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ChangeNotifierProvider<TagsModel>.value(value: tags),
         ChangeNotifierProvider<PlaceTypesModel>.value(value: placeTypes),
         ChangeNotifierProvider<FiltersModel>.value(value: filters),
+        ChangeNotifierProvider<SelectionModel>(create: (context) => SelectionModel()),
         Provider<API>.value(value: widget.api),
       ],
       child: NavigatorPopHandler(
@@ -73,15 +66,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             body: TabBarView(
                               physics: NeverScrollableScrollPhysics(),
                               children: [
-                                MapPage(
-                                  builder: (BuildContext context, void Function(PlaceInfo place) onOpenPlace) {
-                                    openPlacePanel = onOpenPlace;
-                                  },
-                                ),
+                                const MapPage(),
                                 RandomPage(
                                   onSuggestionClicked: (place) {
                                     DefaultTabController.of(context).animateTo(0);
-                                    openPlacePanel(place);
+                                    context.read<SelectionModel>().selected = place;
                                   },
                                 ),
                               ],

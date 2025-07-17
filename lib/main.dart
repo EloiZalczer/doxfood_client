@@ -25,6 +25,9 @@ void main() async {
 
   Settings settings = await Settings.load();
 
+  final location = LocationModel();
+  await location.init();
+
   final Server? server = (settings.currentServer == null) ? null : serversList.getByName(settings.currentServer!);
 
   API? api;
@@ -40,14 +43,10 @@ void main() async {
     }
   }
 
-  final location = LocationModel();
-  await location.init();
-
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ServersListModel>.value(value: serversList),
-        // ChangeNotifierProvider<LocationProvider>.value(value: location),
         Provider<Settings>.value(value: settings),
         Provider<LocationModel>.value(value: location),
       ],

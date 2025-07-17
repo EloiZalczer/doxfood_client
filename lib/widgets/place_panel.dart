@@ -2,6 +2,7 @@ import 'package:doxfood/api.dart';
 import 'package:doxfood/ext.dart';
 import 'package:doxfood/models/location.dart';
 import 'package:doxfood/models/place_types.dart';
+import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/utils/distance.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/widgets/reviews_panel.dart';
@@ -52,6 +53,7 @@ class _PlacePanelState extends State<PlacePanel> {
                   decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade300),
                   child: IconButton(
                     onPressed: () {
+                      context.read<SelectionModel>().selected = null;
                       Navigator.pop(context);
                     },
                     icon: Icon(Icons.close),

@@ -29,51 +29,24 @@ class StarRatingWidget extends StatelessWidget {
   final int starCount;
   final double rating;
   final Color? color;
-  const StarRatingWidget({
-    super.key,
-    this.starCount = 5, // Default to 5 stars
-    this.rating = 0.0, // Default rating is 0
-    this.color, // Optional: custom color for stars
-  });
-  // Method to build each individual star based on the rating and index
-  Widget buildStar(final BuildContext context, final int index) {
+  final double starSize;
+  const StarRatingWidget({super.key, this.starCount = 5, this.rating = 0.0, this.starSize = 16, this.color});
+
+  Widget _buildStar(final BuildContext context, final int index) {
     Icon icon;
-    // If the index is greater than or equal to the rating, we show an empty star
     if (index >= rating) {
-      icon = const Icon(
-        Icons.star_border, // Empty star
-        size: 16,
-        color: StarColors.secondaryContainerGray, // Light gray for empty stars
-      );
-    }
-    // If the index is between the rating minus 1 and the rating, we show a half star
-    else if (index > rating - 1 && index < rating) {
-      icon = Icon(
-        Icons.star_half, // Half star
-        size: 16,
-        color: color ?? StarColors.ratingPrimaryColor, // Default to gold color or custom color
-      );
-    }
-    // Otherwise, we show a full star
-    else {
-      icon = Icon(
-        Icons.star, // Full star
-        size: 16,
-        color: color ?? StarColors.ratingPrimaryColor, // Default to gold color or custom color
-      );
+      icon = Icon(Icons.star_border, size: starSize, color: StarColors.secondaryContainerGray);
+    } else if (index > rating - 1 && index < rating) {
+      icon = Icon(Icons.star_half, size: starSize, color: color ?? StarColors.ratingPrimaryColor);
+    } else {
+      icon = Icon(Icons.star, size: starSize, color: color ?? StarColors.ratingPrimaryColor);
     }
     return icon;
   }
 
   @override
   Widget build(final BuildContext context) {
-    // Creating a row of stars based on the starCount
-    return Row(
-      children: List.generate(
-        starCount, // Generate a row with 'starCount' stars
-        (final index) => buildStar(context, index),
-      ),
-    );
+    return Row(children: List.generate(starCount, (final index) => _buildStar(context, index)));
   }
 }
 

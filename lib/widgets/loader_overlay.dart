@@ -16,9 +16,7 @@ class LoaderOverlay extends StatelessWidget {
         child: SizedBox(
           height: 60.0,
           width: 60.0,
-          child:
-          //Image.asset('assets/images/loader.gif',fit: BoxFit.fill,) // use you custom loader or default loader
-          CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.blue), strokeWidth: 5.0),
+          child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation(Colors.blue), strokeWidth: 5.0),
         ),
       ),
     );

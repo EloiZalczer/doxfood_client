@@ -1,5 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/location.dart';
+import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/pages/add_place.dart';
 import 'package:doxfood/widgets/panel.dart';
 import 'package:doxfood/widgets/search_bar.dart';
@@ -12,12 +13,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-typedef PageBuilder = void Function(BuildContext context, void Function(PlaceInfo place) openPlacePanel);
-
 class MapPage extends StatefulWidget {
-  final PageBuilder builder;
-
-  const MapPage({super.key, required this.builder});
+  const MapPage({super.key});
 
   @override
   State<MapPage> createState() => _MapPageState();
@@ -49,15 +46,33 @@ class _MapPageState extends State<MapPage> {
 
   late final PanelPositionModel _panelPositionModel = PanelPositionModel(0);
 
-  void onMapTapped(BuildContext context, TapPosition tapPosition, LatLng point) {
+  @override
+  void initState() {
+    super.initState();
+    context.read<SelectionModel>().addListener(_onPlaceSelectionChanged);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    context.read<SelectionModel>().removeListener(_onPlaceSelectionChanged);
+  }
+
+  void _onPlaceSelectionChanged() {
+    final place = context.read<SelectionModel>().selected;
+
+    if (place != null) {
+      _centerMapOnPlace(place);
+    }
+  }
+
+  void _onMapTapped(BuildContext context, TapPosition tapPosition, LatLng point) {
     if (panelController.isPanelOpen) {
       panelController.close();
     } else {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddPlacePage(point: point)));
     }
   }
-
-  late void Function(PlaceInfo place) onPlaceTapped;
 
   void _centerMapOnPlace(PlaceInfo place) {
     _mapController.move(place.location, _mapController.camera.zoom);
@@ -71,15 +86,8 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  void onPlaceSelected(PlaceInfo place) {
-    onPlaceTapped(place);
-    _centerMapOnPlace(place);
-  }
-
   @override
   Widget build(BuildContext context) {
-    widget.builder.call(context, onPlaceSelected);
-
     final panelHeightOpen = MediaQuery.of(context).size.height * 0.75;
     final panelHeightClosed = MediaQuery.of(context).size.height * 0.15;
 
@@ -98,22 +106,13 @@ class _MapPageState extends State<MapPage> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
             maxHeight: panelHeightOpen,
             minHeight: panelHeightClosed,
-            panelBuilder:
-                (controller) => PanelWidget(
-                  builder: (BuildContext context, void Function(PlaceInfo place) openPlacePanel) {
-                    onPlaceTapped = openPlacePanel;
-                  },
-                  controller: controller,
-                  panelController: panelController,
-                ),
+            panelBuilder: (controller) => PanelWidget(controller: controller, panelController: panelController),
             body: MapWidget(
               controller: _mapController,
               key: _panelKey,
-              onMapTapped: onMapTapped,
-              onPlaceTapped: (PlaceInfo p) {
-                panelController.animatePanelToPosition(0.5);
-                _centerMapOnPlace(p);
-                onPlaceTapped(p);
+              onMapTapped: _onMapTapped,
+              onPlaceTapped: (PlaceInfo place) {
+                context.read<SelectionModel>().selected = place;
               },
             ),
             onPanelSlide: (position) => _panelPositionModel.position = position,
@@ -162,7 +161,15 @@ class _MapPageState extends State<MapPage> {
                     icon: Icon(Icons.public),
                   ),
                 ),
-                Expanded(child: Center(child: SearchField(onPlaceSelected: onPlaceSelected))),
+                Expanded(
+                  child: Center(
+                    child: SearchField(
+                      onPlaceSelected: (PlaceInfo place) {
+                        context.read<SelectionModel>().selected = place;
+                      },
+                    ),
+                  ),
+                ),
                 Container(
                   height: 40,
                   decoration: BoxDecoration(
