@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/location.dart';
@@ -70,6 +72,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _onMapTapped(BuildContext context, TapPosition tapPosition, LatLng point) {
+    print("map tapped");
     if (panelController.isPanelOpen) {
       panelController.close();
     } else {
@@ -91,7 +94,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    final panelHeightOpen = MediaQuery.of(context).size.height * 0.75;
+    final panelHeightOpen = MediaQuery.of(context).size.height * 0.8;
     final panelHeightClosed = MediaQuery.of(context).size.height * 0.15;
 
     return Scaffold(
@@ -101,6 +104,33 @@ class _MapPageState extends State<MapPage> {
       body: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: [
+          MapWidget(
+            controller: _mapController,
+            key: _panelKey,
+            onMapTapped: _onMapTapped,
+            onPlaceTapped: (PlaceInfo place) {
+              context.read<SelectionModel>().selected = place;
+            },
+          ),
+          ChangeNotifierProvider<PanelPositionModel>.value(
+            value: _panelPositionModel,
+            child: Consumer<PanelPositionModel>(
+              builder: (context, value, child) {
+                final bottom = min(value.position, 0.7) * (panelHeightOpen - panelHeightClosed) + 140;
+                return Positioned(
+                  right: 20,
+                  bottom: bottom,
+                  child: FloatingActionButton(
+                    onPressed: _centerMapOnUser,
+                    backgroundColor: Colors.white,
+                    shape: CircleBorder(side: BorderSide(color: Colors.grey)),
+                    elevation: 1,
+                    child: Icon(Icons.gps_not_fixed, color: Theme.of(context).primaryColor),
+                  ),
+                );
+              },
+            ),
+          ),
           SlidingUpPanel(
             controller: panelController,
             snapPoint: 0.5,
@@ -110,122 +140,114 @@ class _MapPageState extends State<MapPage> {
             maxHeight: panelHeightOpen,
             minHeight: panelHeightClosed,
             panelBuilder: (controller) => PanelWidget(controller: controller, panelController: panelController),
-            body: MapWidget(
-              controller: _mapController,
-              key: _panelKey,
-              onMapTapped: _onMapTapped,
-              onPlaceTapped: (PlaceInfo place) {
-                context.read<SelectionModel>().selected = place;
-              },
-            ),
             onPanelSlide: (position) => _panelPositionModel.position = position,
           ),
           ChangeNotifierProvider<PanelPositionModel>.value(
             value: _panelPositionModel,
             child: Consumer<PanelPositionModel>(
               builder: (context, value, child) {
-                final bottom = value.position * (panelHeightOpen - panelHeightClosed) + 140;
-                if (value.position < 0.8) {
-                  return Positioned(
-                    right: 20,
-                    bottom: bottom,
-                    child: FloatingActionButton(
-                      onPressed: _centerMapOnUser,
-                      backgroundColor: Colors.white,
-                      shape: CircleBorder(side: BorderSide(color: Colors.grey)),
-                      elevation: 1,
-                      child: Icon(Icons.gps_not_fixed, color: Theme.of(context).primaryColor),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
+                final b = MediaQuery.of(context).size.height * 0.04;
+                final a = -b / 0.2;
+                final x = (max(0.8, value.position) - 0.8) * 5;
+
+                final top = a * x + b;
+
+                return Positioned(
+                  top: top,
+                  left: MediaQuery.of(context).size.width * 0.01,
+                  right: MediaQuery.of(context).size.width * 0.01,
+                  child: const MapPageHeader(),
+                );
               },
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.04,
-            left: MediaQuery.of(context).size.width * 0.01,
-            right: MediaQuery.of(context).size.width * 0.01,
-            child: Column(
-              spacing: 10,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ServersListPage()));
-                        },
-                        icon: Icon(Icons.public),
-                      ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: SearchField(
-                          onPlaceSelected: (PlaceInfo place) {
-                            context.read<SelectionModel>().selected = place;
-                          },
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          _key.currentState!.openEndDrawer();
-                        },
-                        icon: Icon(Icons.menu),
-                      ),
-                    ),
-                  ],
-                ),
-                Consumer2<PlaceTypesModel, FilteredPlacesModel>(
-                  builder: (context, types, filtered, child) {
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        spacing: 10,
-                        children: [
-                          ...List.generate(types.placeTypes.length, (int index) {
-                            final type = types.placeTypes[index];
-                            return ChoiceChip(
-                              label: Text(type.name),
-                              selected: type.id == filtered.filteredPlaceType?.id,
-                              onSelected: (value) {
-                                if (value) {
-                                  filtered.filteredPlaceType = type;
-                                } else if (filtered.filteredPlaceType == type) {
-                                  filtered.filteredPlaceType = null;
-                                }
-                              },
-                              showCheckmark: false,
-                              avatar: Icon(iconsMap[type.icon]),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            );
-                          }),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class MapPageHeader extends StatelessWidget {
+  const MapPageHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 10,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ServersListPage()));
+                },
+                icon: Icon(Icons.public),
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: SearchField(
+                  onPlaceSelected: (PlaceInfo place) {
+                    context.read<SelectionModel>().selected = place;
+                  },
+                ),
+              ),
+            ),
+            Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                onPressed: () {
+                  // _key.currentState!.openEndDrawer();
+                },
+                icon: Icon(Icons.menu),
+              ),
+            ),
+          ],
+        ),
+        Consumer2<PlaceTypesModel, FilteredPlacesModel>(
+          builder: (context, types, filtered, child) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                spacing: 10,
+                children: [
+                  ...List.generate(types.placeTypes.length, (int index) {
+                    final type = types.placeTypes[index];
+                    return ChoiceChip(
+                      backgroundColor: Colors.white,
+                      label: Text(type.name),
+                      selected: type.id == filtered.filteredPlaceType?.id,
+                      onSelected: (value) {
+                        if (value) {
+                          filtered.filteredPlaceType = type;
+                        } else if (filtered.filteredPlaceType == type) {
+                          filtered.filteredPlaceType = null;
+                        }
+                      },
+                      showCheckmark: false,
+                      avatar: Icon(iconsMap[type.icon], color: Colors.black),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    );
+                  }),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/filtered_places.dart';
-import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/pages/add_review.dart';
 import 'package:doxfood/widgets/place_panel.dart';
