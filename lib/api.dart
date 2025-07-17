@@ -38,7 +38,7 @@ class Place {
   final LatLng location;
   final String price; // FIXME this shouldn't be a string
   final List<Tag> tags;
-  final String type;
+  final ID type;
   final String? googleMapsLink;
   final String? description;
 
@@ -51,7 +51,7 @@ class Place {
       location: LatLng(location["lat"], location["lon"]),
       price: record.get<String>("price"),
       tags: record.get<List<RecordModel>>("expand.tags").map((tag) => Tag.fromRecord(tag)).toList(),
-      type: record.get<String>("type"),
+      type: record.get<ID>("type"),
       googleMapsLink: record.get<String?>("googleMapsLink"),
       description: record.get<String?>("description"),
     );
@@ -86,7 +86,7 @@ class PlaceInfo {
   String get name => place.name;
   LatLng get location => place.location;
   String get price => place.price;
-  String get type => place.type;
+  ID get type => place.type;
   List<Tag> get tags => place.tags;
   String? get description => place.description;
 
@@ -268,8 +268,6 @@ class API {
     store.save(token, RecordModel({"verified": false}));
 
     final pb = PocketBase(uri, authStore: store);
-
-    print(token);
 
     try {
       await pb.collection("users").authRefresh();

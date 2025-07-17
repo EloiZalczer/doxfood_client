@@ -1,7 +1,10 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/location.dart';
+import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/pages/add_place.dart';
+import 'package:doxfood/utils/icons.dart';
 import 'package:doxfood/widgets/panel.dart';
 import 'package:doxfood/widgets/search_bar.dart';
 import 'package:doxfood/widgets/map.dart';
@@ -144,45 +147,79 @@ class _MapPageState extends State<MapPage> {
             top: MediaQuery.of(context).size.height * 0.04,
             left: MediaQuery.of(context).size.width * 0.01,
             right: MediaQuery.of(context).size.width * 0.01,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
+            child: Column(
+              spacing: 10,
               children: [
-                Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ServersListPage()));
-                    },
-                    icon: Icon(Icons.public),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: SearchField(
-                      onPlaceSelected: (PlaceInfo place) {
-                        context.read<SelectionModel>().selected = place;
-                      },
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ServersListPage()));
+                        },
+                        icon: Icon(Icons.public),
+                      ),
                     ),
-                  ),
+                    Expanded(
+                      child: Center(
+                        child: SearchField(
+                          onPlaceSelected: (PlaceInfo place) {
+                            context.read<SelectionModel>().selected = place;
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          _key.currentState!.openEndDrawer();
+                        },
+                        icon: Icon(Icons.menu),
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      _key.currentState!.openEndDrawer();
-                    },
-                    icon: Icon(Icons.menu),
-                  ),
+                Consumer2<PlaceTypesModel, FilteredPlacesModel>(
+                  builder: (context, types, filtered, child) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        spacing: 10,
+                        children: [
+                          ...List.generate(types.placeTypes.length, (int index) {
+                            final type = types.placeTypes[index];
+                            return ChoiceChip(
+                              label: Text(type.name),
+                              selected: type.id == filtered.filteredPlaceType?.id,
+                              onSelected: (value) {
+                                if (value) {
+                                  filtered.filteredPlaceType = type;
+                                } else if (filtered.filteredPlaceType == type) {
+                                  filtered.filteredPlaceType = null;
+                                }
+                              },
+                              showCheckmark: false,
+                              avatar: Icon(iconsMap[type.icon]),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                            );
+                          }),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

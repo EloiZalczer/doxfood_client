@@ -1,4 +1,5 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/pages/add_review.dart';
@@ -93,7 +94,7 @@ class _PanelWidgetState extends State<PanelWidget> {
               onGenerateRoute: (routeSettings) {
                 return MaterialPageRoute(
                   builder: (context) {
-                    return Consumer<PlacesModel>(
+                    return Consumer<FilteredPlacesModel>(
                       builder: (context, model, child) {
                         return model.places.isNotEmpty
                             ? ListView.separated(

@@ -15,7 +15,6 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: "/home",
       builder: (BuildContext context, GoRouterState state) {
-        print("build homepage");
         return HomePage(api: state.extra as API);
       },
     ),

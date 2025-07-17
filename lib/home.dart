@@ -1,4 +1,5 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/filters.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
@@ -28,12 +29,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final PlaceTypesModel placeTypes = PlaceTypesModel(api: widget.api);
     final FiltersModel filters = FiltersModel(api: widget.api);
 
+    final FilteredPlacesModel filtered = FilteredPlacesModel(places);
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PlacesModel>.value(value: places),
         ChangeNotifierProvider<TagsModel>.value(value: tags),
         ChangeNotifierProvider<PlaceTypesModel>.value(value: placeTypes),
         ChangeNotifierProvider<FiltersModel>.value(value: filters),
+        ChangeNotifierProvider<FilteredPlacesModel>.value(value: filtered),
         ChangeNotifierProvider<SelectionModel>(create: (context) => SelectionModel()),
         Provider<API>.value(value: widget.api),
       ],
