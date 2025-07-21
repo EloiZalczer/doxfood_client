@@ -130,18 +130,19 @@ class PublicUser {
 }
 
 class Tag {
-  Tag({required this.id, required this.name});
+  Tag({required this.id, required this.name, required this.placeType});
 
   final ID id;
   final String name;
+  final ID placeType;
 
   factory Tag.fromRecord(RecordModel record) {
-    return Tag(id: record.get<ID>("id"), name: record.get<String>("name"));
+    return Tag(id: record.get<ID>("id"), name: record.get<String>("name"), placeType: record.get<ID>("placeType"));
   }
 
   @override
   String toString() {
-    return "Tag(id=$id, name=$name)";
+    return "Tag(id=$id, name=$name, placeType=$placeType)";
   }
 }
 

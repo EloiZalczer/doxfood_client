@@ -118,10 +118,17 @@ class _AddPlacePageState extends State<AddPlacePage> {
                   Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Consumer<TagsModel>(
-                      builder: (context, model, child) {
-                        return TagsField(options: model.tags, onCreateTag: _onCreateTag, controller: _tagsController);
-                      },
+                    child: ChangeNotifierProvider<PlaceTypeController>.value(
+                      value: _placeTypeController,
+                      child: Consumer2<TagsModel, PlaceTypeController>(
+                        builder: (context, tags, placeType, child) {
+                          return TagsField(
+                            options: (placeType.type != null) ? tags.getByPlaceType(placeType.type!.id) : [],
+                            onCreateTag: _onCreateTag,
+                            controller: _tagsController,
+                          );
+                        },
+                      ),
                     ),
                   ),
                   Divider(),

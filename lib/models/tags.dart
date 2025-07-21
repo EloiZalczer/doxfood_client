@@ -39,10 +39,14 @@ class TagsModel extends ChangeNotifier {
   }
 
   Future<void> create(PlaceType placeType, String name) async {
-    await _api.pb.collection("tags").create(body: {"name": name, "place_type": placeType.id});
+    await _api.pb.collection("tags").create(body: {"name": name, "placeType": placeType.id});
   }
 
   Tag getById(String id) {
     return _tags.firstWhere((pt) => pt.id == id);
+  }
+
+  List<Tag> getByPlaceType(ID placeType) {
+    return _tags.where((Tag t) => t.placeType == placeType).toList();
   }
 }
