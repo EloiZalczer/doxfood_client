@@ -1,11 +1,10 @@
-import 'dart:collection';
-
 import 'package:doxfood/api.dart';
+import 'package:doxfood/controllers/multiple_selection_controller.dart';
 import 'package:doxfood/utils/color.dart';
 import 'package:flutter/material.dart';
 
 class TagsField extends StatefulWidget {
-  final TagsController? controller;
+  final MultipleSelectionController? controller;
   final List<Tag> options;
   final VoidCallback? onCreateTag;
   final bool enabled;
@@ -24,7 +23,7 @@ class TagsField extends StatefulWidget {
 }
 
 class _TagsFieldState extends State<TagsField> {
-  late TagsController controller = widget.controller ?? TagsController();
+  late MultipleSelectionController controller = widget.controller ?? MultipleSelectionController();
 
   @override
   void initState() {
@@ -62,7 +61,7 @@ class _TagsFieldState extends State<TagsField> {
 class TagItem extends StatelessWidget {
   final String name;
   final String id;
-  final TagsController controller;
+  final MultipleSelectionController controller;
   final bool enabled;
 
   const TagItem({super.key, required this.name, required this.id, required this.controller, required this.enabled});
@@ -77,38 +76,5 @@ class TagItem extends StatelessWidget {
         side: BorderSide(color: colorFromText(name)),
       ),
     );
-  }
-}
-
-class TagsController extends ChangeNotifier {
-  final Set<String> _selected = {};
-
-  TagsController({Iterable<String>? selected}) {
-    if (selected != null) _selected.addAll(selected);
-  }
-
-  Set<String> get selected => UnmodifiableSetView(_selected);
-
-  bool isSelected(String id) {
-    return _selected.contains(id);
-  }
-
-  void select(String id) {
-    _selected.add(id);
-    notifyListeners();
-  }
-
-  void deselect(String id) {
-    _selected.remove(id);
-    notifyListeners();
-  }
-
-  void toggle(String id) {
-    if (_selected.contains(id)) {
-      _selected.remove(id);
-    } else {
-      _selected.add(id);
-    }
-    notifyListeners();
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:doxfood/api.dart';
+import 'package:doxfood/widgets/filter_editor.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:pocketbase/pocketbase.dart';
@@ -38,37 +39,22 @@ class FiltersModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> save(
-    ID? id,
-    String name,
-    bool priceRangeEnabled,
-    bool includeTagsEnabled,
-    bool excludeTagsEnabled,
-    bool includePlacesEnabled,
-    bool excludePlacesEnabled,
-    ID placeType,
-    String lowerPriceBound,
-    String upperPriceBound,
-    List<ID> includedTags,
-    List<ID> excludedTags,
-    List<ID> includedPlaces,
-    List<ID> excludedPlaces,
-  ) async {
+  Future<void> save(ID? id, String name, FilterConfiguration configuration) async {
     Map<String, dynamic> body = {
       "name": name,
       "user": _api.pb.authStore.record!.get<String>("id"),
-      "priceRangeEnabled": priceRangeEnabled,
-      "includeTagsEnabled": includeTagsEnabled,
-      "excludeTagsEnabled": excludeTagsEnabled,
-      "includePlacesEnabled": includePlacesEnabled,
-      "excludePlacesEnabled": excludePlacesEnabled,
-      "placeType": placeType,
-      "lowerPriceBound": lowerPriceBound,
-      "upperPriceBound": upperPriceBound,
-      "includedTags": includedTags,
-      "excludedTags": excludedTags,
-      "includedPlaces": includedPlaces,
-      "excludedPlaces": excludedPlaces,
+      "priceRangeEnabled": configuration.priceRangeEnabled,
+      "includeTagsEnabled": configuration.includeTagsEnabled,
+      "excludeTagsEnabled": configuration.excludeTagsEnabled,
+      "includePlacesEnabled": configuration.includePlacesEnabled,
+      "excludePlacesEnabled": configuration.excludePlacesEnabled,
+      "placeType": configuration.placeType,
+      "lowerPriceBound": configuration.lowerPriceBound,
+      "upperPriceBound": configuration.upperPriceBound,
+      "includedTags": configuration.includedTags,
+      "excludedTags": configuration.excludedTags,
+      "includedPlaces": configuration.includedPlaces,
+      "excludedPlaces": configuration.excludedPlaces,
     };
 
     if (id == null) {

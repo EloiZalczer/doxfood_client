@@ -1,11 +1,19 @@
+import 'package:doxfood/controllers/multiple_selection_controller.dart';
 import 'package:doxfood/models/filters.dart';
 import 'package:doxfood/pages/edit_filter.dart';
 import 'package:doxfood/widgets/filter_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class FiltersListPage extends StatelessWidget {
+class FiltersListPage extends StatefulWidget {
   const FiltersListPage({super.key});
+
+  @override
+  State<FiltersListPage> createState() => _FiltersListPageState();
+}
+
+class _FiltersListPageState extends State<FiltersListPage> {
+  final MultipleSelectionController controller = MultipleSelectionController();
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +25,7 @@ class FiltersListPage extends StatelessWidget {
             itemCount: value.filters.length,
             itemBuilder: (context, index) {
               return FilterTile(
+                controller: controller,
                 filter: value.filters[index],
                 onTap: () {
                   Navigator.of(

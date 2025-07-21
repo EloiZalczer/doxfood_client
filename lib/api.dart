@@ -1,4 +1,5 @@
 import "package:doxfood/http_errors.dart";
+import "package:doxfood/widgets/filter_editor.dart";
 import "package:latlong2/latlong.dart";
 import "package:pocketbase/pocketbase.dart";
 
@@ -200,6 +201,21 @@ class Filter {
       name: record.get("name"),
     );
   }
+
+  FilterConfiguration get configuration => FilterConfiguration(
+    priceRangeEnabled: priceRangeEnabled,
+    includeTagsEnabled: includeTagsEnabled,
+    excludeTagsEnabled: excludeTagsEnabled,
+    includePlacesEnabled: includePlacesEnabled,
+    excludePlacesEnabled: excludePlacesEnabled,
+    placeType: placeType,
+    lowerPriceBound: lowerPriceBound,
+    upperPriceBound: upperPriceBound,
+    includedTags: includedTags,
+    excludedTags: excludedTags,
+    includedPlaces: includedPlaces,
+    excludedPlaces: excludedPlaces,
+  );
 }
 
 class PlaceType {

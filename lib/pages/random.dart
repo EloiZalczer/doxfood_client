@@ -2,12 +2,11 @@ import 'dart:math';
 
 import 'package:doxfood/api.dart';
 import 'package:doxfood/filtering.dart';
-import 'package:doxfood/models/filters.dart';
-import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
-import 'package:doxfood/pages/filters_list.dart';
-import 'package:doxfood/widgets/rating.dart';
-import 'package:doxfood/widgets/tag_chip.dart';
+import 'package:doxfood/widgets/quick_filters_container.dart';
+import 'package:doxfood/widgets/saved_filters_container.dart';
+import 'package:doxfood/widgets/selectable_container.dart';
+import 'package:doxfood/widgets/suggestion_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,10 +25,12 @@ class _RandomPageState extends State<RandomPage> {
 
   final Random _random = Random();
 
+  final SelectionController filteringController = SelectionController(selected: "No filter");
+
   void suggestRandomPlace() {
     List<PlaceInfo> places = context.read<PlacesModel>().places;
 
-    if (_currentFilter == null) {
+    if (_currentFilter != null) {
       final filters = makeFilters(_currentFilter!);
 
       places =
@@ -56,87 +57,46 @@ class _RandomPageState extends State<RandomPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (_suggestion != null) SuggestionPanel(place: _suggestion!, onClicked: widget.onSuggestionClicked),
+            Spacer(flex: 2),
+            if (_suggestion != null) SuggestionCard(place: _suggestion!, onClicked: widget.onSuggestionClicked),
             ElevatedButton(onPressed: suggestRandomPlace, child: Text("Get random place")),
-            DropdownButton<Filter>(
-              items:
-                  context
-                      .read<FiltersModel>()
-                      .filters
-                      .map((f) => DropdownMenuItem(value: f, child: Text(f.name)))
-                      .toList(),
-              onChanged: (value) {
-                setState(() {
-                  _currentFilter = value;
-                });
-              },
-              value: _currentFilter,
+            Spacer(flex: 1),
+            Divider(height: 0),
+            SelectableContainer(
+              title: "No filter",
+              controller: filteringController,
+              value: "No filter",
+              height: 130,
+              child: Container(),
             ),
-            TextButton.icon(
-              label: const Text("Configure"),
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const FiltersListPage()));
-              },
-            ),
+            // SizedBox(height: 130, child: Center(child: Text("No filter"))),
+            Divider(height: 0),
+            QuickFiltersContainer(controller: filteringController),
+            Divider(height: 0),
+            SavedFiltersContainer(controller: filteringController),
+
+            // DropdownButton<Filter>(
+            //   items:
+            //       context
+            //           .read<FiltersModel>()
+            //           .filters
+            //           .map((f) => DropdownMenuItem(value: f, child: Text(f.name)))
+            //           .toList(),
+            //   onChanged: (value) {
+            //     setState(() {
+            //       _currentFilter = value;
+            //     });
+            //   },
+            //   value: _currentFilter,
+            // ),
+            // TextButton.icon(
+            //   label: const Text("Configure"),
+            //   icon: const Icon(Icons.settings),
+            //   onPressed: () {
+            //     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const FiltersListPage()));
+            //   },
+            // ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class SuggestionPanel extends StatelessWidget {
-  final Function(PlaceInfo place)? onClicked;
-  final PlaceInfo place;
-
-  const SuggestionPanel({super.key, required this.place, this.onClicked});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (onClicked != null) onClicked!(place);
-      },
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Text(place.name, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20)),
-              Row(
-                spacing: 8.0,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Consumer<PlaceTypesModel>(
-                    builder: (context, value, child) {
-                      return Text(value.getById(place.type).name, style: TextStyle(color: Theme.of(context).hintColor));
-                    },
-                  ),
-                  Text("•", style: TextStyle(color: Theme.of(context).hintColor)),
-                  Text(place.price, style: TextStyle(color: Theme.of(context).hintColor)),
-                ],
-              ),
-
-              PlaceRatingWidget(place: place),
-              Row(
-                spacing: 8.0,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...place.tags.take(2).map((tag) {
-                    return TagChip(tag: tag);
-                  }),
-                  if (place.tags.length > 2)
-                    Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade300),
-                      child: Center(child: Text("+${place.tags.length - 2}", textAlign: TextAlign.center)),
-                    ),
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );

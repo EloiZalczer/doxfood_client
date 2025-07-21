@@ -1,4 +1,4 @@
-import 'package:doxfood/api.dart';
+import 'package:doxfood/widgets/filter_editor.dart';
 import 'package:flutter/material.dart';
 
 extension Intersperse<T> on Iterable<T> {
@@ -15,7 +15,7 @@ extension Intersperse<T> on Iterable<T> {
 }
 
 class FilterSummary extends StatelessWidget {
-  final Filter filter;
+  final FilterConfiguration filter;
 
   const FilterSummary({super.key, required this.filter});
 
@@ -54,7 +54,8 @@ class FilterSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      spacing: 8.0,
+      spacing: 4.0,
+      mainAxisSize: MainAxisSize.min,
       children:
           [
             if (filter.priceRangeEnabled) _buildPriceRange(),

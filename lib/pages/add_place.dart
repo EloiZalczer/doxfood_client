@@ -1,3 +1,4 @@
+import 'package:doxfood/controllers/multiple_selection_controller.dart';
 import 'package:doxfood/dialogs/create_tag.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
@@ -27,7 +28,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _priceController = PriceController();
-  final _tagsController = TagsController();
+  final _tagsController = MultipleSelectionController();
   late PlaceTypeController _placeTypeController;
   final _descriptionController = TextEditingController();
 
