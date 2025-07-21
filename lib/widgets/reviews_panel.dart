@@ -3,6 +3,7 @@ import 'package:doxfood/models/places.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/widgets/fields/rating_field.dart';
 import 'package:doxfood/widgets/review_tile.dart';
+import 'package:doxfood/widgets/sort_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -18,11 +19,17 @@ class ReviewsPanel extends StatefulWidget {
 }
 
 class _ReviewsPanelState extends State<ReviewsPanel> {
-  String _sortedBy = "created";
-  SortOrder _sortOrder = SortOrder.descending;
+  SortController sortController = SortController("created", SortOrder.descending);
 
   Future<List<Review>> _load(BuildContext context, String field, SortOrder order) {
     return context.read<PlacesModel>().getPlaceReviews(widget.place.id, sort: Sort(field, order));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    sortController.addListener(() => setState(() {}));
   }
 
   @override
@@ -30,7 +37,7 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
     final currentUserId = context.read<API>().getCurrentUserId();
 
     return FutureBuilder(
-      future: _load(context, _sortedBy, _sortOrder),
+      future: _load(context, sortController.sortedBy, sortController.sortOrder),
       builder: (BuildContext context, AsyncSnapshot<List<Review>> reviews) {
         if (reviews.hasData) {
           return Column(
@@ -43,61 +50,14 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
                 RatingField(onRatingSelected: widget.onAddReview),
                 Divider(height: 10),
               ],
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text("Sort by", style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  InputChip(
-                    avatar:
-                        (_sortedBy == "created")
-                            ? (_sortOrder == SortOrder.descending)
-                                ? Icon(Icons.keyboard_arrow_down)
-                                : Icon(Icons.keyboard_arrow_up)
-                            : null,
-                    label: SizedBox(
-                      width: MediaQuery.sizeOf(context).width * 0.35,
-                      child: Text("Creation date", textAlign: TextAlign.center),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _sortedBy = "created";
-                        _sortOrder =
-                            (_sortedBy == "rating")
-                                ? SortOrder.descending
-                                : (_sortOrder == SortOrder.ascending)
-                                ? SortOrder.descending
-                                : SortOrder.ascending;
-                      });
-                    },
-                  ),
-                  InputChip(
-                    avatar:
-                        (_sortedBy == "rating")
-                            ? (_sortOrder == SortOrder.descending)
-                                ? Icon(Icons.keyboard_arrow_down)
-                                : Icon(Icons.keyboard_arrow_up)
-                            : null,
-                    label: SizedBox(
-                      width: MediaQuery.sizeOf(context).width * 0.35,
-                      child: Text("Rating", textAlign: TextAlign.center),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _sortedBy = "rating";
-                        _sortOrder =
-                            (_sortedBy == "created")
-                                ? SortOrder.descending
-                                : (_sortOrder == SortOrder.ascending)
-                                ? SortOrder.descending
-                                : SortOrder.ascending;
-                      });
-                    },
-                  ),
-                ],
-              ),
+              if (reviews.data!.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text("Sort by", style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                SortSelector(controller: sortController),
+              ],
+
               Expanded(
                 child: ListView.separated(
                   itemCount: reviews.data!.length,

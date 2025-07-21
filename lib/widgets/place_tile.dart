@@ -20,7 +20,7 @@ class PlaceTile extends StatelessWidget {
 
     return InkWell(
       child: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -44,17 +44,14 @@ class PlaceTile extends StatelessWidget {
               ],
             ),
             SizedBox(height: 5.0),
-            Row(
-              children: [
-                Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: 10,
-                  children:
-                      place.tags.map((tag) {
-                        return TagChip(tag: tag);
-                      }).toList(),
-                ),
-              ],
+            Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 10,
+              runSpacing: 10,
+              children:
+                  place.tags.map((tag) {
+                    return TagChip(tag: tag);
+                  }).toList(),
             ),
           ],
         ),
