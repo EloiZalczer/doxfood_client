@@ -1,7 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/location.dart';
-import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/widgets/compass.dart';
 import 'package:doxfood/widgets/marker.dart';

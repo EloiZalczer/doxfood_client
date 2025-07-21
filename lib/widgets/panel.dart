@@ -44,6 +44,7 @@ class _PanelWidgetState extends State<PanelWidget> {
 
     navigatorKey.currentState!.push(
       PageRouteBuilder(
+        settings: RouteSettings(name: "place"), // Name the route so we can use this to pop all open places at once
         pageBuilder: (context, animation, secondaryAnimation) {
           return PlacePanel(place: place, onAddReview: (int rating) => _openAddReviewPage(place, rating));
         },

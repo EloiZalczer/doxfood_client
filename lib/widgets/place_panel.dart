@@ -54,7 +54,10 @@ class _PlacePanelState extends State<PlacePanel> {
                   child: IconButton(
                     onPressed: () {
                       context.read<SelectionModel>().selected = null;
-                      Navigator.pop(context);
+                      Navigator.popUntil(context, (route) {
+                        if (route.settings.name == "place") return false;
+                        return true;
+                      });
                     },
                     icon: Icon(Icons.close),
                   ),

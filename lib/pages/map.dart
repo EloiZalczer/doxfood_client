@@ -46,7 +46,7 @@ class _MapPageState extends State<MapPage> {
 
   final _mapController = MapController();
 
-  late final panelHeightOpen = MediaQuery.of(context).size.height * 0.75;
+  late final panelHeightOpen = MediaQuery.of(context).size.height * 0.8;
   late final panelHeightClosed = MediaQuery.of(context).size.height * 0.15;
 
   late final PanelPositionModel _panelPositionModel = PanelPositionModel(0);
@@ -81,7 +81,14 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _centerMapOnPlace(PlaceInfo place) {
-    _mapController.move(place.location, _mapController.camera.zoom);
+    // The panel slides up to half of the screen when selecting a place. Use an
+    // offset to make sure the place is visible.
+
+    _mapController.move(
+      place.location,
+      _mapController.camera.zoom,
+      offset: Offset(0, -0.2 * MediaQuery.of(context).size.height),
+    );
   }
 
   void _centerMapOnUser() {
@@ -94,9 +101,6 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    final panelHeightOpen = MediaQuery.of(context).size.height * 0.8;
-    final panelHeightClosed = MediaQuery.of(context).size.height * 0.15;
-
     return Scaffold(
       key: _key,
       endDrawer: SettingsDrawer(),
@@ -210,7 +214,7 @@ class MapPageHeader extends StatelessWidget {
               ),
               child: IconButton(
                 onPressed: () {
-                  // _key.currentState!.openEndDrawer();
+                  // _key.currentState!.openEndDrawer(); // TODO re-implement this feature
                 },
                 icon: Icon(Icons.menu),
               ),
