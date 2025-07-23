@@ -158,8 +158,10 @@ class _MapPageState extends State<MapPage> {
 
                 return Positioned(
                   top: top,
-                  left: MediaQuery.of(context).size.width * 0.01,
-                  right: MediaQuery.of(context).size.width * 0.01,
+                  left: 0,
+                  right: 0,
+                  // left: MediaQuery.of(context).size.width * 0.01,
+                  // right: MediaQuery.of(context).size.width * 0.01,
                   child: const MapPageHeader(),
                 );
               },
@@ -179,55 +181,59 @@ class MapPageHeader extends StatelessWidget {
     return Column(
       spacing: 10,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ServersListPage()));
-                },
-                icon: const Icon(Icons.public),
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: SearchField(
-                  onPlaceSelected: (PlaceInfo place) {
-                    context.read<SelectionModel>().selected = place;
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                height: 40,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ServersListPage()));
                   },
+                  icon: const Icon(Icons.public),
                 ),
               ),
-            ),
-            Container(
-              height: 40,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
-                shape: BoxShape.circle,
+              Expanded(
+                child: Center(
+                  child: SearchField(
+                    onPlaceSelected: (PlaceInfo place) {
+                      context.read<SelectionModel>().selected = place;
+                    },
+                  ),
+                ),
               ),
-              child: IconButton(
-                onPressed: () {
-                  // _key.currentState!.openEndDrawer(); // TODO re-implement this feature
-                },
-                icon: const Icon(Icons.menu),
+              Container(
+                height: 40,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    // _key.currentState!.openEndDrawer(); // TODO re-implement this feature
+                  },
+                  icon: const Icon(Icons.menu),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         Consumer2<PlaceTypesModel, FilteredPlacesModel>(
           builder: (context, types, filtered, child) {
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                spacing: 10,
+                spacing: 6,
                 children: [
+                  const SizedBox(width: 2),
                   ...List.generate(types.placeTypes.length, (int index) {
                     final type = types.placeTypes[index];
                     return ChoiceChip(
@@ -246,6 +252,7 @@ class MapPageHeader extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     );
                   }),
+                  const SizedBox(width: 2),
                 ],
               ),
             );
