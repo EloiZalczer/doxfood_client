@@ -21,7 +21,10 @@ class GoogleMapsLinkField extends FormField<String> {
                }
                return null;
              },
-             decoration: InputDecoration(border: UnderlineInputBorder(), labelText: "Google Maps link (optional)"),
+             decoration: const InputDecoration(
+               border: UnderlineInputBorder(),
+               labelText: "Google Maps link (optional)",
+             ),
            );
          },
        );

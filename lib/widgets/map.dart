@@ -35,7 +35,7 @@ class _MapWidgetState extends State<MapWidget> {
             maxZoom: 20,
             minZoom: 8,
             keepAlive: true,
-            interactionOptions: InteractionOptions(),
+            interactionOptions: const InteractionOptions(),
             initialCenter: const LatLng(48.8363012, 2.240709935), // TODO don't hardcode that
             onTap: (tapPosition, point) {
               widget.onMapTapped(context, tapPosition, point);

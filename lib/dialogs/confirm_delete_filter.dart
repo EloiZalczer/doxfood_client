@@ -18,11 +18,11 @@ class ConfirmDeleteFilterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Delete filter"),
+      title: const Text("Delete filter"),
       content: Text("Do you really want to delete filter ${filter.name} ?"),
       actions: [
-        TextButton(child: Text("Cancel"), onPressed: () => Navigator.pop(context)),
-        ElevatedButton(child: Text("Remove"), onPressed: () => Navigator.pop(context, true)),
+        TextButton(child: const Text("Cancel"), onPressed: () => Navigator.pop(context)),
+        ElevatedButton(child: const Text("Remove"), onPressed: () => Navigator.pop(context, true)),
       ],
     );
   }

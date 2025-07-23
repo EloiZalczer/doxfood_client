@@ -44,15 +44,15 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ReviewsRatingWidget(reviews: reviews.data!),
-              Divider(height: 24),
+              const Divider(height: 24),
               if (!reviews.data!.any((review) => review.user.id == currentUserId)) ...[
-                Center(child: Text("Leave a review")),
+                const Center(child: Text("Leave a review")),
                 RatingField(onRatingSelected: widget.onAddReview),
-                Divider(height: 10),
+                const Divider(height: 10),
               ],
               if (reviews.data!.isNotEmpty) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text("Sort by", style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
                 SortSelector(controller: sortController),
@@ -62,7 +62,7 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
                 child: ListView.separated(
                   itemCount: reviews.data!.length,
                   separatorBuilder: (context, index) {
-                    return Divider();
+                    return const Divider();
                   },
                   itemBuilder: (context, index) {
                     return ReviewTile(review: reviews.data![index]);
@@ -79,7 +79,7 @@ class _ReviewsPanelState extends State<ReviewsPanel> {
             child: ListView.separated(
               itemCount: 3,
               separatorBuilder: (context, index) {
-                return Divider();
+                return const Divider();
               },
               itemBuilder: (context, index) {
                 return ReviewTile(

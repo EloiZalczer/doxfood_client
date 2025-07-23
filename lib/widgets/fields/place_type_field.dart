@@ -31,7 +31,7 @@ class _PlaceTypeFieldState extends State<PlaceTypeField> {
       items: widget.options.map((pt) => DropdownMenuItem(value: pt, child: Text(pt.name))).toList(),
       onChanged: widget.enabled ? (PlaceType? s) => controller.type = s : null,
       value: controller.type,
-      decoration: InputDecoration(border: UnderlineInputBorder(), labelText: widget.label),
+      decoration: InputDecoration(border: const UnderlineInputBorder(), labelText: widget.label),
       validator: (value) {
         if (value == null) return "This field is required";
         return null;

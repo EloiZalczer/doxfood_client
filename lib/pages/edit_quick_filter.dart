@@ -28,7 +28,7 @@ class _EditQuickFilterPageState extends State<EditQuickFilterPage> {
       child: Scaffold(
         appBar: AppBar(),
         body: Center(child: FilterEditor(filter: widget.configuration, key: _editorKey)),
-        bottomNavigationBar: ElevatedButton(onPressed: _submit, child: Text("Save")),
+        bottomNavigationBar: ElevatedButton(onPressed: _submit, child: const Text("Save")),
       ),
     );
   }

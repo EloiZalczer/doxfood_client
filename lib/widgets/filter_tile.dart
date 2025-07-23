@@ -52,6 +52,7 @@ class _FilterTileState extends State<FilterTile> {
       title: Text(widget.filter.name),
       subtitle: FilterSummary(filter: widget.filter.configuration),
       onTap: () => widget.onTap(),
+      trailing: const Icon(Icons.chevron_right),
     );
   }
 }

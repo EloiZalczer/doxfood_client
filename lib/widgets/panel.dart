@@ -44,7 +44,7 @@ class _PanelWidgetState extends State<PanelWidget> {
 
     navigatorKey.currentState!.push(
       PageRouteBuilder(
-        settings: RouteSettings(name: "place"), // Name the route so we can use this to pop all open places at once
+        settings: const RouteSettings(name: "place"), // Name the route so we can use this to pop all open places at once
         pageBuilder: (context, animation, secondaryAnimation) {
           return PlacePanel(place: place, onAddReview: (int rating) => _openAddReviewPage(place, rating));
         },
@@ -71,7 +71,7 @@ class _PanelWidgetState extends State<PanelWidget> {
         child: Container(
           width: 30,
           height: 5,
-          decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.all(Radius.circular(5))),
+          decoration: BoxDecoration(color: Colors.grey[300], borderRadius: const BorderRadius.all(Radius.circular(5))),
         ),
       ),
     );
@@ -81,9 +81,9 @@ class _PanelWidgetState extends State<PanelWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         buildDragHandle(),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         Expanded(
           child: NavigatorPopHandler(
             onPopWithResult: (result) {
@@ -115,7 +115,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                                 );
                               },
                             )
-                            : Center(child: Text("No places. Create the first one by clicking on the map !"));
+                            : const Center(child: Text("No places. Create the first one by clicking on the map !"));
                       },
                     );
                   },

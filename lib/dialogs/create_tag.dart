@@ -40,7 +40,7 @@ class _CreateTagDialogState extends State<CreateTagDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("New tag"),
+      title: const Text("New tag"),
       content: Form(
         key: _formKey,
         child: Column(
@@ -63,8 +63,8 @@ class _CreateTagDialogState extends State<CreateTagDialog> {
         ),
       ),
       actions: [
-        TextButton(child: Text("Cancel"), onPressed: () => Navigator.pop(context)),
-        ElevatedButton(child: Text("Save"), onPressed: () => _submit()),
+        TextButton(child: const Text("Cancel"), onPressed: () => Navigator.pop(context)),
+        ElevatedButton(child: const Text("Save"), onPressed: () => _submit()),
       ],
     );
   }

@@ -31,12 +31,12 @@ class _SortSelectorState extends State<SortSelector> {
           avatar:
               (controller.sortedBy == "created")
                   ? (controller.sortOrder == SortOrder.descending)
-                      ? Icon(Icons.keyboard_arrow_down)
-                      : Icon(Icons.keyboard_arrow_up)
+                      ? const Icon(Icons.keyboard_arrow_down)
+                      : const Icon(Icons.keyboard_arrow_up)
                   : null,
           label: SizedBox(
             width: MediaQuery.sizeOf(context).width * 0.35,
-            child: Text("Creation date", textAlign: TextAlign.center),
+            child: const Text("Creation date", textAlign: TextAlign.center),
           ),
           onPressed: () {
             setState(() {
@@ -54,12 +54,12 @@ class _SortSelectorState extends State<SortSelector> {
           avatar:
               (controller.sortedBy == "rating")
                   ? (controller.sortOrder == SortOrder.descending)
-                      ? Icon(Icons.keyboard_arrow_down)
-                      : Icon(Icons.keyboard_arrow_up)
+                      ? const Icon(Icons.keyboard_arrow_down)
+                      : const Icon(Icons.keyboard_arrow_up)
                   : null,
           label: SizedBox(
             width: MediaQuery.sizeOf(context).width * 0.35,
-            child: Text("Rating", textAlign: TextAlign.center),
+            child: const Text("Rating", textAlign: TextAlign.center),
           ),
           onPressed: () {
             setState(() {

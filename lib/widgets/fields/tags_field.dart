@@ -52,7 +52,7 @@ class _TagsFieldState extends State<TagsField> {
             ),
           ),
         ),
-        TextButton(onPressed: widget.enabled ? widget.onCreateTag : null, child: Text("Nouveau tag")),
+        TextButton(onPressed: widget.enabled ? widget.onCreateTag : null, child: const Text("Nouveau tag")),
       ],
     );
   }

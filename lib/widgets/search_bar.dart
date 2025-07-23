@@ -37,7 +37,7 @@ class _SearchFieldState extends State<SearchField> {
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
+            boxShadow: const [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
             borderRadius: BorderRadius.circular(borderRadius),
             // shape: BoxShape.circle,
           ),
@@ -46,16 +46,16 @@ class _SearchFieldState extends State<SearchField> {
             readOnly: true,
             textInputAction: TextInputAction.search,
             onTap: _onSearch,
-            style: TextStyle(height: 0.6),
+            style: const TextStyle(height: 0.6),
             cursorHeight: 20,
             // showCursor: false,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
-              prefixIcon: Icon(Icons.tune),
+              prefixIcon: const Icon(Icons.tune),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
-                borderSide: BorderSide(width: 0, style: BorderStyle.none),
+                borderSide: const BorderSide(width: 0, style: BorderStyle.none),
               ),
             ),
           ),

@@ -22,7 +22,7 @@ class PlacesField extends FormField<List<PlaceInfo>> {
                  options
                      .map((opt) => DropdownItem(label: opt.name, value: opt, selected: initialValue.contains(opt.id)))
                      .toList(),
-             fieldDecoration: FieldDecoration(labelText: "Places", border: UnderlineInputBorder()),
+             fieldDecoration: const FieldDecoration(labelText: "Places", border: UnderlineInputBorder()),
            );
          },
        );

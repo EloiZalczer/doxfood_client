@@ -86,7 +86,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        appBar: AppBar(title: Text("Create new place")),
+        appBar: AppBar(title: const Text("Create new place")),
         body: Form(
           key: _formKey,
           child: SizedBox(
@@ -116,7 +116,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                     ),
                   ),
 
-                  Divider(),
+                  const Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ChangeNotifierProvider<PlaceTypeController>.value(
@@ -132,13 +132,13 @@ class _AddPlacePageState extends State<AddPlacePage> {
                       ),
                     ),
                   ),
-                  Divider(),
+                  const Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Column(children: [Text("Price"), PriceField(controller: _priceController)]),
+                    child: Column(children: [const Text("Price"), PriceField(controller: _priceController)]),
                   ),
 
-                  Divider(),
+                  const Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -147,7 +147,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                           controller: _descriptionController,
                           keyboardType: TextInputType.multiline,
                           maxLines: null,
-                          decoration: InputDecoration(hintText: "Description (optional)"),
+                          decoration: const InputDecoration(hintText: "Description (optional)"),
                         ),
                         GoogleMapsLinkField(),
                       ],
@@ -165,8 +165,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
           child: Material(
             elevation: 15,
             child: Container(
-              padding: EdgeInsets.all(10),
-              child: ElevatedButton(onPressed: _submit, child: Text("Create")),
+              padding: const EdgeInsets.all(10),
+              child: ElevatedButton(onPressed: _submit, child: const Text("Create")),
             ),
           ),
         ),
@@ -192,7 +192,7 @@ class MapPreview extends StatelessWidget {
               urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
               userAgentPackageName: "com.doxfood.app",
             ),
-            MarkerLayer(markers: [Marker(point: point, child: FlutterLogo())]),
+            MarkerLayer(markers: [Marker(point: point, child: const FlutterLogo())]),
           ],
         ),
       ),

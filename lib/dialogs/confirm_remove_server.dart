@@ -18,13 +18,13 @@ class ConfirmRemoveServerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Remove server"),
+      title: const Text("Remove server"),
       content: Text(
         "Do you really want to remove ${server.name} from the list ? You will need to connect again to access it.",
       ),
       actions: [
-        TextButton(child: Text("Cancel"), onPressed: () => Navigator.pop(context)),
-        ElevatedButton(child: Text("Remove"), onPressed: () => Navigator.pop(context, true)),
+        TextButton(child: const Text("Cancel"), onPressed: () => Navigator.pop(context)),
+        ElevatedButton(child: const Text("Remove"), onPressed: () => Navigator.pop(context, true)),
       ],
     );
   }

@@ -77,7 +77,7 @@ class _EditServerPageState extends State<EditServerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Edit Server")),
+      appBar: AppBar(title: const Text("Edit Server")),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -106,12 +106,12 @@ class _EditServerPageState extends State<EditServerPage> {
                   validator: validateRequired,
                 ),
                 PasswordField(controller: _passwordController, validator: validateRequired),
-                Spacer(),
-                if (_error != null) Text(_error!, style: TextStyle(color: Colors.red)),
+                const Spacer(),
+                if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [ElevatedButton(onPressed: _onSave, child: Text("Save"))],
+                  children: [ElevatedButton(onPressed: _onSave, child: const Text("Save"))],
                 ),
               ],
             ),

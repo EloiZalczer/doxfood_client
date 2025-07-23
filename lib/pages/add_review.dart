@@ -50,7 +50,7 @@ class _AddReviewPageState extends State<AddReviewPage> {
                     controller: _textController,
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
-                    decoration: InputDecoration(hintText: "Leave a review"),
+                    decoration: const InputDecoration(hintText: "Leave a review"),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "This field is required";
@@ -61,9 +61,13 @@ class _AddReviewPageState extends State<AddReviewPage> {
                     },
                   ),
                 ),
-                ElevatedButton.icon(onPressed: () {}, label: Text("Ajouter des photos"), icon: Icon(Icons.camera)),
-                Spacer(),
-                ElevatedButton(onPressed: _submit, child: Text("Publish")),
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  label: const Text("Ajouter des photos"),
+                  icon: const Icon(Icons.camera),
+                ),
+                const Spacer(),
+                ElevatedButton(onPressed: _submit, child: const Text("Publish")),
               ],
             ),
           ),

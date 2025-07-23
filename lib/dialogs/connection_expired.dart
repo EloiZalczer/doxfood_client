@@ -46,20 +46,20 @@ class _ConnectionExpiredDialogState extends State<ConnectionExpiredDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("This connection has expired"),
+      title: const Text("This connection has expired"),
       content: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Please connect again."),
+            const Text("Please connect again."),
             PasswordField(controller: _passwordController, validator: validateRequired),
           ],
         ),
       ),
       actions: [
-        TextButton(child: Text("Cancel"), onPressed: () => Navigator.pop(context)),
-        ElevatedButton(onPressed: _valid ? null : _submit, child: Text("Connect")),
+        TextButton(child: const Text("Cancel"), onPressed: () => Navigator.pop(context)),
+        ElevatedButton(onPressed: _valid ? null : _submit, child: const Text("Connect")),
       ],
     );
   }

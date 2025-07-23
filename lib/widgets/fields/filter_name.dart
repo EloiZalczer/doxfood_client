@@ -53,13 +53,13 @@ class _FilterNameFieldState extends State<FilterNameField> {
       controller: _controller,
       focusNode: _focusNode,
       readOnly: !_editing,
-      style: TextStyle(fontSize: 20),
+      style: const TextStyle(fontSize: 20),
       decoration: InputDecoration(
         border: InputBorder.none,
         suffixIcon:
             _editing
-                ? IconButton(onPressed: _stopEditing, icon: Icon(Icons.check))
-                : IconButton(onPressed: _startEditing, icon: Icon(Icons.edit)),
+                ? IconButton(onPressed: _stopEditing, icon: const Icon(Icons.check))
+                : IconButton(onPressed: _startEditing, icon: const Icon(Icons.edit)),
       ),
     );
   }

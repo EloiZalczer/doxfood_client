@@ -122,7 +122,7 @@ class _AddServerPageState extends State<AddServerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Add Server")),
+      appBar: AppBar(title: const Text("Add Server")),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -197,16 +197,16 @@ class _AddServerPageState extends State<AddServerPage> {
                     labelText: "Confirm password",
                   ),
                 ],
-                Spacer(),
-                if (_error != null) Text(_error!, style: TextStyle(color: Colors.red)),
+                const Spacer(),
+                if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     if (_mode == null || _mode == _LoginMode.login)
-                      ElevatedButton(onPressed: _onLoginClicked, child: Text("Login")),
+                      ElevatedButton(onPressed: _onLoginClicked, child: const Text("Login")),
                     if (_mode == null || _mode == _LoginMode.register)
-                      ElevatedButton(onPressed: _onRegisterClicked, child: Text("Register")),
+                      ElevatedButton(onPressed: _onRegisterClicked, child: const Text("Register")),
                   ],
                 ),
               ],

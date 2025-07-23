@@ -12,7 +12,7 @@ class LoaderOverlay extends StatelessWidget {
       height: height ?? MediaQuery.of(context).size.height,
       width: width ?? MediaQuery.of(context).size.width,
       color: Colors.transparent,
-      child: Center(
+      child: const Center(
         child: SizedBox(
           height: 60.0,
           width: 60.0,

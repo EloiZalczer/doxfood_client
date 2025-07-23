@@ -22,7 +22,7 @@ class SuggestionCard extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Text(place.name, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20)),
+              Text(place.name, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 20)),
               Row(
                 spacing: 8.0,
                 mainAxisSize: MainAxisSize.min,

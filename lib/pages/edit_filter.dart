@@ -63,11 +63,11 @@ class _EditFilterPageState extends State<EditFilterPage> {
         appBar: AppBar(
           title: FilterNameField(controller: _filterNameController),
           actions: [
-            if (widget.filter != null) IconButton(onPressed: () => _onDelete(context), icon: Icon(Icons.delete)),
+            if (widget.filter != null) IconButton(onPressed: () => _onDelete(context), icon: const Icon(Icons.delete)),
           ],
         ),
         body: Center(child: FilterEditor(filter: widget.filter?.configuration)),
-        bottomNavigationBar: ElevatedButton(onPressed: _submit, child: Text("Save")),
+        bottomNavigationBar: ElevatedButton(onPressed: _submit, child: const Text("Save")),
       ),
     );
   }

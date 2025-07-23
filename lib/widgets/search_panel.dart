@@ -62,18 +62,18 @@ class _SearchPanelState extends State<SearchPanel> {
             width: MediaQuery.of(context).size.width * 0.9,
             height: 40,
             child: Padding(
-              padding: EdgeInsets.only(left: 10.0, right: 10.0),
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
               child: Center(
                 child: TextField(
                   controller: widget.controller,
                   autofocus: true,
                   textInputAction: TextInputAction.search,
-                  style: TextStyle(height: 0.6),
+                  style: const TextStyle(height: 0.6),
                   cursorHeight: 20,
                   // showCursor: false,
                   decoration: InputDecoration(
                     prefixIcon: IconButton(
-                      icon: Icon(Icons.arrow_back),
+                      icon: const Icon(Icons.arrow_back),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -99,7 +99,10 @@ class _SearchPanelState extends State<SearchPanel> {
                       Navigator.pop(context, suggestions[index]);
                     },
                     titleAlignment: ListTileTitleAlignment.top,
-                    title: Text(suggestions[index].name, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20)),
+                    title: Text(
+                      suggestions[index].name,
+                      style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 20),
+                    ),
                     leading: Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: PlaceDistanceIcon(place: place, distance: distance),

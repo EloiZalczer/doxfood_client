@@ -16,7 +16,7 @@ class ServerTile extends StatelessWidget {
         title: Text(server.name),
         subtitle: Text(server.uri),
         onTap: () => onTap(server),
-        trailing: isCurrent ? Icon(Icons.circle, color: Colors.green, size: 12.0) : null,
+        trailing: isCurrent ? const Icon(Icons.circle, color: Colors.green, size: 12.0) : null,
         onLongPress: () {
           if (onLongPress != null) onLongPress!(server);
         },

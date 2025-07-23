@@ -15,8 +15,8 @@ class LocationModel {
   late StreamSubscription<LocationMarkerPosition?>? _positionStreamSubscription;
 
   Future<void> init() async {
-    positionStream = LocationMarkerDataStreamFactory().fromGeolocatorPositionStream();
-    headingStream = LocationMarkerDataStreamFactory().fromRotationSensorHeadingStream();
+    positionStream = const LocationMarkerDataStreamFactory().fromGeolocatorPositionStream();
+    headingStream = const LocationMarkerDataStreamFactory().fromRotationSensorHeadingStream();
 
     _positionStreamSubscription = positionStream.listen(
       (position) => _current = position,

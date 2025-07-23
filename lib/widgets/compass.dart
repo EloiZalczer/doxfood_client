@@ -6,7 +6,7 @@ class Compass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: Size(30, 30),
+      size: const Size(30, 30),
       foregroundPainter: CompassPainter(),
       child: Container(
         width: 30,
@@ -15,7 +15,7 @@ class Compass extends StatelessWidget {
           shape: BoxShape.circle,
           color: Colors.white,
           border: Border.all(color: Colors.grey, width: 1.0),
-          boxShadow: [BoxShadow(blurRadius: 0.5, color: Colors.grey)],
+          boxShadow: const [BoxShadow(blurRadius: 0.5, color: Colors.grey)],
         ),
       ),
     );

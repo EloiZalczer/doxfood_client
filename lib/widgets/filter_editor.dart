@@ -135,7 +135,7 @@ class FilterEditorState extends State<FilterEditor> {
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -153,7 +153,7 @@ class FilterEditorState extends State<FilterEditor> {
               ],
             ),
           ),
-          Divider(),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -180,7 +180,7 @@ class FilterEditorState extends State<FilterEditor> {
             ),
           ),
 
-          Divider(),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -206,7 +206,7 @@ class FilterEditorState extends State<FilterEditor> {
               ],
             ),
           ),
-          Divider(),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -234,7 +234,7 @@ class FilterEditorState extends State<FilterEditor> {
             ),
           ),
 
-          Divider(),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

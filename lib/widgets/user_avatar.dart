@@ -19,7 +19,10 @@ class UserAvatar extends StatelessWidget {
         backgroundColor: colorFromText(user.username),
         radius: 16,
         backgroundImage: (avatarUri != null) ? NetworkImage(avatarUri.toString()) : null,
-        child: (avatarUri == null) ? Text(user.username[0].toUpperCase(), style: TextStyle(color: Colors.black)) : null,
+        child:
+            (avatarUri == null)
+                ? Text(user.username[0].toUpperCase(), style: const TextStyle(color: Colors.black))
+                : null,
       ),
     );
   }

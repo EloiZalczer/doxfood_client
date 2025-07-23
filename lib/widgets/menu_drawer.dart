@@ -7,7 +7,7 @@ class SettingsDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        children: [
+        children: const [
           DrawerHeader(
             decoration: BoxDecoration(color: Colors.blue),
             child: Text("Menu"),

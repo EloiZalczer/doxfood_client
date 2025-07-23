@@ -17,7 +17,7 @@ class PlaceRatingWidget extends StatelessWidget {
       children: [
         Text(place.averageRating.toStringAsFixed(1), style: TextStyle(color: Theme.of(context).hintColor)),
         dense
-            ? Icon(Icons.star, size: 16, color: StarColors.ratingPrimaryColor)
+            ? const Icon(Icons.star, size: 16, color: StarColors.ratingPrimaryColor)
             : StarRatingWidget(rating: place.averageRating),
         Text("(${place.ratings.length})", style: TextStyle(color: Theme.of(context).hintColor)),
       ],
@@ -75,7 +75,7 @@ class ReviewsRatingWidget extends StatelessWidget {
       children: [
         Column(
           children: [
-            Text(averageRating.toStringAsFixed(1), style: TextStyle(fontWeight: FontWeight.w400, fontSize: 24)),
+            Text(averageRating.toStringAsFixed(1), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 24)),
             StarRatingWidget(rating: averageRating),
             Text("(${reviews.length})"),
           ],
@@ -112,7 +112,7 @@ class RatingRow extends StatelessWidget {
             Container(
               height: height,
               width: maxWidth,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: StarColors.secondaryContainerGray,
                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
               ),
@@ -120,7 +120,7 @@ class RatingRow extends StatelessWidget {
             Container(
               height: height,
               width: maxWidth * relativeHeight,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: StarColors.ratingPrimaryColor,
                 borderRadius: BorderRadius.all(Radius.circular(12.0)),
               ),

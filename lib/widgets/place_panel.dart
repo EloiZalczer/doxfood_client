@@ -41,7 +41,7 @@ class _PlacePanelState extends State<PlacePanel> {
                     onPressed: () {
                       launchMap(widget.place.location, widget.place.name);
                     },
-                    icon: Icon(Icons.navigation),
+                    icon: const Icon(Icons.navigation),
                   ),
                 ),
               ),
@@ -59,7 +59,7 @@ class _PlacePanelState extends State<PlacePanel> {
                         return true;
                       });
                     },
-                    icon: Icon(Icons.close),
+                    icon: const Icon(Icons.close),
                   ),
                 ),
               ),
@@ -71,7 +71,7 @@ class _PlacePanelState extends State<PlacePanel> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [Text(widget.place.description!)]),
           ),
-        Divider(height: 10),
+        const Divider(height: 10),
         Expanded(child: ReviewsPanel(place: widget.place, onAddReview: widget.onAddReview)),
       ],
     );
@@ -91,8 +91,8 @@ class PlacePanelHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(place.name, textAlign: TextAlign.left, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 25)),
-        SizedBox(height: 5),
+        Text(place.name, textAlign: TextAlign.left, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 25)),
+        const SizedBox(height: 5),
         PlaceRatingWidget(place: place),
         Row(
           spacing: 8.0,

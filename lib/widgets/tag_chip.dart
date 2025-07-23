@@ -13,7 +13,7 @@ class TagChip extends StatelessWidget {
       backgroundColor: colorFromText(tag.name),
       label: Text(tag.name),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity(horizontal: 0.0, vertical: -4),
+      visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4),
     );
   }
 }

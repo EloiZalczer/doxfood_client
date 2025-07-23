@@ -25,7 +25,7 @@ class PlaceTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(place.name, style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0)),
+            Text(place.name, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 18.0)),
             Row(
               spacing: 8.0,
               children: [
@@ -43,7 +43,7 @@ class PlaceTile extends StatelessWidget {
                 ],
               ],
             ),
-            SizedBox(height: 5.0),
+            const SizedBox(height: 5.0),
             Wrap(
               alignment: WrapAlignment.start,
               spacing: 10,

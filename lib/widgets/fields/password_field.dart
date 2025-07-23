@@ -21,7 +21,7 @@ class _PasswordFieldState extends State<PasswordField> {
       keyboardType: TextInputType.text,
       obscureText: !_visible,
       decoration: InputDecoration(
-        border: UnderlineInputBorder(),
+        border: const UnderlineInputBorder(),
         labelText: widget.labelText,
         suffixIcon: IconButton(
           onPressed: () {

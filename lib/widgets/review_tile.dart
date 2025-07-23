@@ -11,7 +11,7 @@ class ReviewTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      shape: ContinuousRectangleBorder(side: BorderSide(color: Colors.black, width: 1)),
+      shape: const ContinuousRectangleBorder(side: BorderSide(color: Colors.black, width: 1)),
       title: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: Row(spacing: 6, children: [UserAvatar(user: review.user), Text(review.user.username)]),

@@ -103,7 +103,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _key,
-      endDrawer: SettingsDrawer(),
+      endDrawer: const SettingsDrawer(),
       endDrawerEnableOpenDragGesture: false,
       body: Stack(
         alignment: AlignmentDirectional.topCenter,
@@ -127,7 +127,7 @@ class _MapPageState extends State<MapPage> {
                   child: FloatingActionButton(
                     onPressed: _centerMapOnUser,
                     backgroundColor: Colors.white,
-                    shape: CircleBorder(side: BorderSide(color: Colors.grey)),
+                    shape: const CircleBorder(side: BorderSide(color: Colors.grey)),
                     elevation: 1,
                     child: Icon(Icons.gps_not_fixed, color: Theme.of(context).primaryColor),
                   ),
@@ -140,7 +140,7 @@ class _MapPageState extends State<MapPage> {
             snapPoint: 0.5,
             parallaxEnabled: true,
             parallaxOffset: 0.5,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
             maxHeight: panelHeightOpen,
             minHeight: panelHeightClosed,
             panelBuilder: (controller) => PanelWidget(controller: controller, panelController: panelController),
@@ -184,16 +184,16 @@ class MapPageHeader extends StatelessWidget {
           children: [
             Container(
               height: 40,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
                 shape: BoxShape.circle,
               ),
               child: IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ServersListPage()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ServersListPage()));
                 },
-                icon: Icon(Icons.public),
+                icon: const Icon(Icons.public),
               ),
             ),
             Expanded(
@@ -207,7 +207,7 @@ class MapPageHeader extends StatelessWidget {
             ),
             Container(
               height: 40,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 boxShadow: [BoxShadow(spreadRadius: 0.0, blurRadius: 2.0)],
                 shape: BoxShape.circle,
@@ -216,7 +216,7 @@ class MapPageHeader extends StatelessWidget {
                 onPressed: () {
                   // _key.currentState!.openEndDrawer(); // TODO re-implement this feature
                 },
-                icon: Icon(Icons.menu),
+                icon: const Icon(Icons.menu),
               ),
             ),
           ],
