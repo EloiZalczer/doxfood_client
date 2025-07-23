@@ -42,8 +42,8 @@ class ServersListModel extends ChangeNotifier {
     _servers.addAll((await _db.query("servers")).map((e) => Server.fromRecord(e)));
   }
 
-  Server? getByName(String name) {
-    return _servers.cast<Server?>().firstWhere((e) => e!.name == name, orElse: () => null);
+  Server? getById(int id) {
+    return _servers.cast<Server?>().firstWhere((e) => e!.id == id, orElse: () => null);
   }
 
   Future<void> add(String name, String uri, String username, String token) async {

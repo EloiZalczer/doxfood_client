@@ -22,7 +22,7 @@ class _ServersListPageState extends State<ServersListPage> {
   bool _loading = false;
 
   void onServerSelected(BuildContext context, Server s) async {
-    context.read<Settings>().currentServer = s.name;
+    context.read<Settings>().currentServer = s.id;
 
     final servers = context.read<ServersListModel>();
 
@@ -68,14 +68,14 @@ class _ServersListPageState extends State<ServersListPage> {
     return Stack(
       children: [
         Scaffold(
-          appBar: AppBar(title: Text("Servers")),
+          appBar: AppBar(title: const Text("Servers")),
           body: Consumer<ServersListModel>(
             builder: (context, value, child) {
               return ListView.builder(
                 itemCount: value.servers.length,
                 itemBuilder: (context, index) {
                   return ServerTile(
-                    isCurrent: current == value.servers[index].name,
+                    isCurrent: current == value.servers[index].id,
                     server: value.servers[index],
                     onTap: (server) => onServerSelected(context, server),
                     onLongPress: (server) {
@@ -91,12 +91,12 @@ class _ServersListPageState extends State<ServersListPage> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddServerPage()));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AddServerPage()));
             },
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
           ),
         ),
-        if (_loading) LoaderOverlay(),
+        if (_loading) const LoaderOverlay(),
       ],
     );
   }

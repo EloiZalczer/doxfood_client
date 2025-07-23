@@ -11,13 +11,13 @@ class Settings {
     return Settings._(await SharedPreferences.getInstance());
   }
 
-  String? get currentServer => _prefs.getString(_currentServerKey);
+  int? get currentServer => _prefs.getInt(_currentServerKey);
 
-  set currentServer(String? server) {
+  set currentServer(int? server) {
     if (server == null) {
       _prefs.remove(_currentServerKey);
     } else {
-      _prefs.setString(_currentServerKey, server);
+      _prefs.setInt(_currentServerKey, server);
     }
   }
 }

@@ -28,7 +28,7 @@ void main() async {
   final location = LocationModel();
   await location.init();
 
-  final Server? server = (settings.currentServer == null) ? null : serversList.getByName(settings.currentServer!);
+  final Server? server = (settings.currentServer == null) ? null : serversList.getById(settings.currentServer!);
 
   API? api;
 

@@ -43,7 +43,7 @@ class ServerDetailsPage extends StatelessWidget {
 
       serversList.remove(server.id);
 
-      if (settings.currentServer == server.name) {
+      if (settings.currentServer == server.id) {
         settings.currentServer = null;
         GoRouter.of(context).go("/servers");
       } else {
@@ -62,8 +62,8 @@ class ServerDetailsPage extends StatelessWidget {
         appBar: AppBar(
           title: Text(server.name),
           actions: [
-            IconButton(onPressed: () => _onEdit(context), icon: Icon(Icons.edit)),
-            IconButton(onPressed: () => _onDelete(context), icon: Icon(Icons.delete)),
+            IconButton(onPressed: () => _onEdit(context), icon: const Icon(Icons.edit)),
+            IconButton(onPressed: () => _onDelete(context), icon: const Icon(Icons.delete)),
           ],
         ),
         body: FutureBuilder(
@@ -73,12 +73,15 @@ class ServerDetailsPage extends StatelessWidget {
               return Column(
                 children: [
                   Text(snapshot.data!.info.description),
-                  Divider(),
+                  const Divider(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Row(
                       children: [
-                        Text("${snapshot.data!.users.length} user(s)", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                          "${snapshot.data!.users.length} user(s)",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                   ),
@@ -91,7 +94,7 @@ class ServerDetailsPage extends StatelessWidget {
                         return ListTile(
                           leading: UserAvatar(user: user),
                           title: Text(snapshot.data!.users[index].username),
-                          trailing: (user.id == you) ? Text("You") : null,
+                          trailing: (user.id == you) ? const Text("You") : null,
                         );
                       },
                     ),
@@ -101,7 +104,7 @@ class ServerDetailsPage extends StatelessWidget {
             } else if (snapshot.hasError) {
               return Center(child: Text(snapshot.error.toString()));
             } else {
-              return Center(child: Text("Loading..."));
+              return const Center(child: Text("Loading..."));
             }
           },
         ),
