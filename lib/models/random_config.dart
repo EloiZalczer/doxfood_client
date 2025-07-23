@@ -5,6 +5,16 @@ import 'package:doxfood/widgets/filter_editor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+const _schema = [
+  """
+  CREATE TABLE random_config(
+    id INTEGER PRIMARY KEY,
+    server TEXT UNIQUE,
+
+  )
+""",
+];
+
 class RandomConfigurationModel extends ChangeNotifier {
   int? _server;
   FilterConfiguration? _quickFilter;

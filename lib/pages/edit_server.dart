@@ -46,7 +46,7 @@ class _EditServerPageState extends State<EditServerPage> {
       return;
     }
 
-    final serversList = context.read<ServersListModel>();
+    final serversList = context.read<ServersModel>();
 
     final pb = PocketBase(_urlController.text);
 

@@ -21,15 +21,15 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  ServersListModel serversList = await ServersListModel.open();
-  await serversList.load();
+  ServersModel servers = await ServersModel.open();
+  await servers.load();
 
   Settings settings = await Settings.load();
 
   final location = LocationModel();
   await location.init();
 
-  final Server? server = (settings.currentServer == null) ? null : serversList.getById(settings.currentServer!);
+  final Server? server = (servers.currentServer == null) ? null : servers.getById(servers.currentServer!);
 
   API? api;
 
@@ -40,7 +40,7 @@ void main() async {
       api = await API.connectWithToken(server.uri, server.token);
     } on Unauthorized {
       api = null;
-      settings.currentServer = null;
+      servers.currentServer = null;
     }
   }
 
@@ -49,7 +49,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<ServersListModel>.value(value: serversList),
+        ChangeNotifierProvider<ServersModel>.value(value: servers),
         ChangeNotifierProvider<RandomConfigurationModel>.value(value: randomConfiguration),
         Provider<Settings>.value(value: settings),
         Provider<LocationModel>.value(value: location),

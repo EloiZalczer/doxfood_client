@@ -1,7 +1,6 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/dialogs/confirm_remove_server.dart';
 import 'package:doxfood/models/servers.dart';
-import 'package:doxfood/models/settings.dart';
 import 'package:doxfood/pages/edit_server.dart';
 import 'package:doxfood/widgets/user_avatar.dart';
 import 'package:flutter/material.dart';
@@ -38,13 +37,11 @@ class ServerDetailsPage extends StatelessWidget {
     final result = await ConfirmRemoveServerDialog.show(context, server);
 
     if (result == true && context.mounted) {
-      final serversList = context.read<ServersListModel>();
-      final settings = context.read<Settings>();
+      final servers = context.read<ServersModel>();
 
-      serversList.remove(server.id);
+      servers.remove(server.id);
 
-      if (settings.currentServer == server.id) {
-        settings.currentServer = null;
+      if (servers.currentServer == null) {
         GoRouter.of(context).go("/servers");
       } else {
         Navigator.of(context).pop();

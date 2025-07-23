@@ -3,7 +3,6 @@ import 'package:doxfood/dialogs/connection_expired.dart';
 import 'package:doxfood/http_errors.dart';
 import 'package:doxfood/pages/add_server.dart';
 import 'package:doxfood/models/servers.dart';
-import 'package:doxfood/models/settings.dart';
 import 'package:doxfood/pages/server_details.dart';
 import 'package:doxfood/widgets/loader_overlay.dart';
 import 'package:doxfood/widgets/server_tile.dart';
@@ -22,9 +21,7 @@ class _ServersListPageState extends State<ServersListPage> {
   bool _loading = false;
 
   void onServerSelected(BuildContext context, Server s) async {
-    context.read<Settings>().currentServer = s.id;
-
-    final servers = context.read<ServersListModel>();
+    final servers = context.read<ServersModel>();
 
     setState(() {
       _loading = true;
@@ -55,6 +52,8 @@ class _ServersListPageState extends State<ServersListPage> {
       }
     }
 
+    servers.currentServer = s.id;
+
     if (context.mounted) {
       GoRouter.of(context).go("/home", extra: api);
       Navigator.of(context).pop();
@@ -63,13 +62,13 @@ class _ServersListPageState extends State<ServersListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final current = context.read<Settings>().currentServer;
+    final current = context.read<ServersModel>().currentServer;
 
     return Stack(
       children: [
         Scaffold(
           appBar: AppBar(title: const Text("Servers")),
-          body: Consumer<ServersListModel>(
+          body: Consumer<ServersModel>(
             builder: (context, value, child) {
               return ListView.builder(
                 itemCount: value.servers.length,

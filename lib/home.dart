@@ -5,6 +5,7 @@ import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/random_config.dart';
 import 'package:doxfood/models/selection.dart';
+import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/settings.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/pages/map.dart';
@@ -41,7 +42,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     filtered = FilteredPlacesModel(places);
 
-    context.read<RandomConfigurationModel>().load(context.read<Settings>().currentServer!);
+    context.read<RandomConfigurationModel>().load(context.read<ServersModel>().currentServer!);
   }
 
   @override

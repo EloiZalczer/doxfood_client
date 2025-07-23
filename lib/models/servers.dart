@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -5,23 +6,24 @@ import 'package:sqflite/sqflite.dart';
 
 const List<String> _migrations = [
   "ALTER TABLE servers ADD username TEXT",
-  // """
-  // CREATE TABLE active_server(id INTEGER PRIMARY KEY REFERENCES servers);
-  // CREATE UNIQUE INDEX active_server_singleton ON active_server ((true));
-  // REVOKE DELETE ON TABLE active_server FROM public;
-  // """,
+  """
+  CREATE TABLE active_server(id INTEGER PRIMARY KEY REFERENCES servers);
+  CREATE UNIQUE INDEX active_server_singleton ON active_server ((true));
+  """,
 ];
 
-class ServersListModel extends ChangeNotifier {
+class ServersModel extends ChangeNotifier {
   final Database _db;
 
   final List<Server> _servers = [];
 
+  int? _currentServer;
+
   UnmodifiableListView<Server> get servers => UnmodifiableListView(_servers);
 
-  ServersListModel._(this._db);
+  ServersModel._(this._db);
 
-  static Future<ServersListModel> open() async {
+  static Future<ServersModel> open() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     final db = await openDatabase(
@@ -39,14 +41,30 @@ class ServersListModel extends ChangeNotifier {
       onDowngrade: (db, oldVersion, newVersion) {
         throw Exception("Attempted to downgrade database from version $oldVersion to version $newVersion");
       },
-      version: 2,
+      version: 3,
     );
 
-    return ServersListModel._(db);
+    return ServersModel._(db);
   }
 
   Future<void> load() async {
     _servers.addAll((await _db.query("servers")).map((e) => Server.fromRecord(e)));
+
+    _currentServer = await _db.query("active_server").then((value) => value.firstOrNull?["id"] as int?);
+  }
+
+  int? get currentServer => _currentServer;
+
+  set currentServer(int? server) {
+    _currentServer = server;
+
+    if (server == null) {
+      unawaited(_db.delete("active_server"));
+    } else {
+      unawaited(_db.insert("active_server", {"id": server}, conflictAlgorithm: ConflictAlgorithm.replace));
+    }
+
+    notifyListeners();
   }
 
   Server? getById(int id) {
@@ -63,6 +81,12 @@ class ServersListModel extends ChangeNotifier {
   Future<void> remove(int id) async {
     await _db.delete("servers", where: "id = ?", whereArgs: [id]);
     _servers.removeWhere((Server s) => s.id == id);
+
+    final deleted = await _db.delete("active_server", where: "id = ?", whereArgs: [id]);
+    if (deleted > 0) {
+      _currentServer = null;
+    }
+
     notifyListeners();
   }
 

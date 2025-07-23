@@ -28,17 +28,19 @@ class _RandomPageState extends State<RandomPage> {
 
   final Random _random = Random();
 
+  late final RandomConfigurationModel _model;
+
   @override
   void initState() {
     super.initState();
-    context.read<RandomConfigurationModel>().addListener(_refreshFilteredPlacesCount);
+    _model = context.read<RandomConfigurationModel>()..addListener(_refreshFilteredPlacesCount);
     _refreshFilteredPlacesCount();
   }
 
   @override
   void dispose() {
+    _model.removeListener(_refreshFilteredPlacesCount);
     super.dispose();
-    context.read<RandomConfigurationModel>().removeListener(_refreshFilteredPlacesCount);
   }
 
   List<PlaceInfo> _getFilteredPlaces() {

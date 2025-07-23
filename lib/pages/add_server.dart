@@ -53,7 +53,7 @@ class _AddServerPageState extends State<AddServerPage> {
       return;
     }
 
-    final serversList = context.read<ServersListModel>();
+    final serversList = context.read<ServersModel>();
 
     final pb = PocketBase(_urlController.text);
 
@@ -88,7 +88,7 @@ class _AddServerPageState extends State<AddServerPage> {
       return;
     }
 
-    final serversList = context.read<ServersListModel>();
+    final serversList = context.read<ServersModel>();
 
     final pb = PocketBase(_urlController.text);
 
