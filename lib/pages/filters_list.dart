@@ -1,4 +1,3 @@
-import 'package:doxfood/controllers/multiple_selection_controller.dart';
 import 'package:doxfood/models/filters.dart';
 import 'package:doxfood/pages/edit_filter.dart';
 import 'package:doxfood/widgets/filter_tile.dart';
@@ -13,19 +12,16 @@ class FiltersListPage extends StatefulWidget {
 }
 
 class _FiltersListPageState extends State<FiltersListPage> {
-  final MultipleSelectionController controller = MultipleSelectionController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Filters")),
+      appBar: AppBar(title: const Text("Filters")),
       body: Consumer<FiltersModel>(
         builder: (context, value, child) {
           return ListView.builder(
             itemCount: value.filters.length,
             itemBuilder: (context, index) {
               return FilterTile(
-                controller: controller,
                 filter: value.filters[index],
                 onTap: () {
                   Navigator.of(
@@ -39,9 +35,9 @@ class _FiltersListPageState extends State<FiltersListPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditFilterPage()));
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const EditFilterPage()));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

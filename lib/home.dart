@@ -3,7 +3,9 @@ import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/filters.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
+import 'package:doxfood/models/random_config.dart';
 import 'package:doxfood/models/selection.dart';
+import 'package:doxfood/models/settings.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/pages/map.dart';
 import 'package:doxfood/pages/random.dart';
@@ -22,15 +24,28 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
+  late final PlacesModel places;
+  late final TagsModel tags;
+  late final PlaceTypesModel placeTypes;
+  late final FiltersModel filters;
+  late final FilteredPlacesModel filtered;
+
+  @override
+  void initState() {
+    super.initState();
+
+    places = PlacesModel(api: widget.api);
+    tags = TagsModel(api: widget.api);
+    placeTypes = PlaceTypesModel(api: widget.api);
+    filters = FiltersModel(api: widget.api);
+
+    filtered = FilteredPlacesModel(places);
+
+    context.read<RandomConfigurationModel>().load(context.read<Settings>().currentServer!);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final PlacesModel places = PlacesModel(api: widget.api);
-    final TagsModel tags = TagsModel(api: widget.api);
-    final PlaceTypesModel placeTypes = PlaceTypesModel(api: widget.api);
-    final FiltersModel filters = FiltersModel(api: widget.api);
-
-    final FilteredPlacesModel filtered = FilteredPlacesModel(places);
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PlacesModel>.value(value: places),
@@ -60,7 +75,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         builder: (context) {
                           return Scaffold(
                             bottomNavigationBar: TabBar(
-                              tabs: [Tab(icon: Icon(Icons.map)), Tab(icon: Icon(Icons.casino))],
+                              tabs: const [Tab(icon: Icon(Icons.map)), Tab(icon: Icon(Icons.casino))],
                               isScrollable: false,
                               indicatorSize: TabBarIndicatorSize.tab,
                               indicator: BoxDecoration(
@@ -68,7 +83,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               ),
                             ),
                             body: TabBarView(
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               children: [
                                 const MapPage(),
                                 RandomPage(

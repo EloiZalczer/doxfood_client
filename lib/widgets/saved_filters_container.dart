@@ -1,60 +1,48 @@
-import 'package:doxfood/pages/edit_filter.dart';
-import 'package:doxfood/pages/edit_quick_filter.dart';
+import 'package:doxfood/models/filters.dart';
+import 'package:doxfood/models/random_config.dart';
 import 'package:doxfood/pages/filters_list.dart';
-import 'package:doxfood/widgets/filter_editor.dart';
-import 'package:doxfood/widgets/filter_summary.dart';
 import 'package:doxfood/widgets/selectable_container.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SavedFiltersContainer extends StatefulWidget {
-  final SelectionController controller;
+  final bool? selected;
+  final VoidCallback? onTap;
 
-  const SavedFiltersContainer({super.key, required this.controller});
+  const SavedFiltersContainer({super.key, this.selected, this.onTap});
 
   @override
   State<SavedFiltersContainer> createState() => _SavedFiltersContainerState();
 }
 
 class _SavedFiltersContainerState extends State<SavedFiltersContainer> {
-  final String value = "saved_filters";
-
-  FilterConfiguration? configuration;
-
-  @override
-  void initState() {
-    super.initState();
-
-    widget.controller.addListener(() {
-      setState(() {});
-    });
-  }
-
-  void _onConfigure() async {
-    final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => FiltersListPage()));
-
-    if (result != null) {
-      setState(() {
-        configuration = result;
-      });
-    }
+  void _onConfigure() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const FiltersListPage()));
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedFilters = context.read<RandomConfigurationModel>().selectedFilters;
+
     return SelectableContainer(
       title: "Saved filters",
-      controller: widget.controller,
-      value: value,
-      height: 130,
+      selected: widget.selected,
+      onTap: widget.onTap,
+      height: 120,
       child: Center(
         child: Column(
           children: [
             ElevatedButton.icon(
-              onPressed: (widget.controller.selected == value) ? _onConfigure : null,
-              label: Text("Configure"),
-              icon: Icon(Icons.settings),
+              onPressed: (widget.selected ?? false) ? _onConfigure : null,
+              label: const Text("Configure"),
+              icon: const Icon(Icons.settings),
             ),
-            if (configuration != null) Center(child: FilterSummary(filter: configuration!)),
+            if (selectedFilters.isNotEmpty)
+              Center(
+                child: Text(
+                  selectedFilters.map((element) => context.read<FiltersModel>().getById(element).name).join(", "),
+                ),
+              ),
           ],
         ),
       ),

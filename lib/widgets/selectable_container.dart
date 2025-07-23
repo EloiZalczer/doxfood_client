@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 class SelectableContainer extends StatefulWidget {
-  final String value;
   final Widget child;
   final String? title;
-  final SelectionController? controller;
+  final bool? selected;
+  final VoidCallback? onTap;
 
   final double? width;
   final double? height;
 
   const SelectableContainer({
     super.key,
-    required this.value,
     required this.child,
-    this.controller,
+    this.selected,
+    this.onTap,
     this.title,
     this.width,
     this.height,
@@ -24,29 +24,8 @@ class SelectableContainer extends StatefulWidget {
 }
 
 class _SelectableContainerState extends State<SelectableContainer> {
-  late SelectionController controller = widget.controller ?? SelectionController(selected: widget.value);
-
-  @override
-  void initState() {
-    super.initState();
-
-    controller.addListener(_onControllerUpdate);
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-
-    controller.removeListener(_onControllerUpdate);
-  }
-
-  void _onControllerUpdate() {
-    setState(() {});
-  }
-
   Color? _titleColor() {
-    if (controller.selected == widget.value) {
+    if (widget.selected ?? false) {
       return Colors.blue[700];
     } else {
       return null;
@@ -58,30 +37,45 @@ class _SelectableContainerState extends State<SelectableContainer> {
     final titleColor = _titleColor();
 
     return Material(
-      color:
-          (controller.selected == widget.value) ? Theme.of(context).primaryColorLight : Theme.of(context).canvasColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: titleColor ?? Colors.grey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      color: (widget.selected ?? false) ? Theme.of(context).primaryColorLight : Theme.of(context).canvasColor,
       child: InkWell(
-        onTap: () {
-          if (controller.selected != widget.value) controller.selected = widget.value;
-        },
-        child: SizedBox(
-          height: widget.height,
-          width: widget.width,
-          child:
-              (widget.title == null)
-                  ? widget.child
-                  : ListTile(
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(widget.title!, style: TextStyle(fontWeight: FontWeight.w500, color: titleColor)),
-                        (controller.selected == widget.value)
-                            ? Icon(Icons.check_circle, color: titleColor)
-                            : Icon(Icons.circle_outlined, color: titleColor),
-                      ],
-                    ),
-                    subtitle: widget.child,
-                  ),
+        onTap: widget.onTap,
+        child: Stack(
+          children: [
+            SizedBox(
+              height: widget.height,
+              width: widget.width,
+              child:
+                  (widget.title == null)
+                      ? widget.child
+                      : ListTile(
+                        title: Text(widget.title!, style: TextStyle(fontWeight: FontWeight.w500, color: titleColor)),
+
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Text(widget.title!, style: TextStyle(fontWeight: FontWeight.w500, color: titleColor)),
+                        //     (widget.selected ?? false)
+                        //         ? Icon(Icons.check_circle, color: titleColor)
+                        //         : Icon(Icons.circle_outlined, color: titleColor),
+                        //   ],
+                        // ),
+                        subtitle: Padding(padding: const EdgeInsets.only(top: 8.0), child: widget.child),
+                      ),
+            ),
+            Positioned(
+              top: 8,
+              right: 8,
+              child:
+                  (widget.selected ?? false)
+                      ? Icon(Icons.check_circle, color: titleColor)
+                      : Icon(Icons.circle_outlined, color: titleColor),
+            ),
+          ],
         ),
       ),
     );

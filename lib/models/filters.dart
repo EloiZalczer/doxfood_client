@@ -67,4 +67,9 @@ class FiltersModel extends ChangeNotifier {
   Future<void> delete(ID id) async {
     await _api.pb.collection("filters").delete(id);
   }
+
+  Filter getById(ID id) {
+    print(_filters);
+    return _filters.firstWhere((pt) => pt.id == id);
+  }
 }

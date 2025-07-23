@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-const List<String> _migrations = ["ALTER TABLE servers ADD username TEXT"];
+const List<String> _migrations = [
+  "ALTER TABLE servers ADD username TEXT",
+  // """
+  // CREATE TABLE active_server(id INTEGER PRIMARY KEY REFERENCES servers);
+  // CREATE UNIQUE INDEX active_server_singleton ON active_server ((true));
+  // REVOKE DELETE ON TABLE active_server FROM public;
+  // """,
+];
 
 class ServersListModel extends ChangeNotifier {
   final Database _db;
@@ -20,7 +27,7 @@ class ServersListModel extends ChangeNotifier {
     final db = await openDatabase(
       join(await getDatabasesPath(), "doxfood_database.db"),
       onCreate: (db, version) {
-        return db.execute("CREATE TABLE servers(id INTEGER PRIMARY KEY, name TEXT UNIQUE, uri TEXT, token TEXT)");
+        return db.execute("CREATE TABLE servers(id INTEGER PRIMARY KEY, name TEXT UNIQUE, uri TEXT, token TEXT);");
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         final batch = db.batch();

@@ -216,6 +216,11 @@ class Filter {
     includedPlaces: includedPlaces,
     excludedPlaces: excludedPlaces,
   );
+
+  @override
+  String toString() {
+    return "Filter(id=$id, name=$name, priceRangeEnabled=$priceRangeEnabled, includeTagsEnabled=$includeTagsEnabled, excludeTagsEnabled=$excludeTagsEnabled, includePlacesEnabled=$includePlacesEnabled, excludePlacesEnabled=$excludePlacesEnabled, placeType=$placeType, lowerPriceBound=$lowerPriceBound, upperPriceBound=$upperPriceBound, includedTags=$includedTags, excludedTags=$excludedTags, includedPlaces=$includedPlaces, excludedPlaces=$excludedPlaces, user=$user)";
+  }
 }
 
 class PlaceType {

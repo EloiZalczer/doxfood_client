@@ -2,6 +2,7 @@ import 'package:doxfood/api.dart';
 import 'package:doxfood/app.dart';
 import 'package:doxfood/http_errors.dart';
 import 'package:doxfood/models/location.dart';
+import 'package:doxfood/models/random_config.dart';
 import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/settings.dart';
 import 'package:flutter/material.dart';
@@ -43,10 +44,13 @@ void main() async {
     }
   }
 
+  final randomConfiguration = await RandomConfigurationModel.open();
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<ServersListModel>.value(value: serversList),
+        ChangeNotifierProvider<RandomConfigurationModel>.value(value: randomConfiguration),
         Provider<Settings>.value(value: settings),
         Provider<LocationModel>.value(value: location),
       ],

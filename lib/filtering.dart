@@ -1,4 +1,5 @@
 import 'package:doxfood/api.dart';
+import 'package:doxfood/widgets/filter_editor.dart';
 
 bool _filterValue(List options, value, bool negative) {
   if (negative) {
@@ -31,8 +32,10 @@ bool filterPlaces(String field, String? subfield, List options, bool negative, M
   }
 }
 
-List<bool Function(Map place)> makeFilters(Filter config) {
+List<bool Function(Map place)> makeFilters(FilterConfiguration config) {
   List<bool Function(Map place)> filters = [];
+
+  filters.add((Map place) => filterPlaces("type", null, [config.placeType], false, place));
 
   if (config.includeTagsEnabled && config.includedTags.isNotEmpty) {
     filters.add((Map place) => filterPlaces("tags", "id", config.includedTags, false, place));
@@ -62,4 +65,16 @@ List<bool Function(Map place)> makeFilters(Filter config) {
   }
 
   return filters;
+}
+
+List<PlaceInfo> applyFilters(List<PlaceInfo> places, List<bool Function(Map place)> filters) {
+  return places.where((p) {
+    final m = p.place.asMap();
+    for (final filter in filters) {
+      if (!filter(m)) {
+        return false;
+      }
+    }
+    return true;
+  }).toList();
 }
