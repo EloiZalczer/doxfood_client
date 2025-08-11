@@ -6,7 +6,6 @@ import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/random_config.dart';
 import 'package:doxfood/models/selection.dart';
 import 'package:doxfood/models/servers.dart';
-import 'package:doxfood/models/settings.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/pages/map.dart';
 import 'package:doxfood/pages/random.dart';

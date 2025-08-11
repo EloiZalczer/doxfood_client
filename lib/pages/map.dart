@@ -156,14 +156,7 @@ class _MapPageState extends State<MapPage> {
 
                 final top = a * x + b;
 
-                return Positioned(
-                  top: top,
-                  left: 0,
-                  right: 0,
-                  // left: MediaQuery.of(context).size.width * 0.01,
-                  // right: MediaQuery.of(context).size.width * 0.01,
-                  child: const MapPageHeader(),
-                );
+                return Positioned(top: top, left: 0, right: 0, child: const MapPageHeader());
               },
             ),
           ),
