@@ -12,11 +12,10 @@ class PlaceTypesModel extends ChangeNotifier {
 
   UnmodifiableListView<PlaceType> get placeTypes => UnmodifiableListView(_placeTypes);
 
-  PlaceTypesModel({required API api}) : _api = api {
-    _loadPlaceTypes();
-  }
+  PlaceTypesModel({required API api}) : _api = api;
 
-  Future<void> _loadPlaceTypes() async {
+  Future<void> load() async {
+    print("loading place types");
     _placeTypes.clear();
     _placeTypes.addAll((await _api.getPlaceTypes()));
 

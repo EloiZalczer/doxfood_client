@@ -39,6 +39,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     placeTypes = PlaceTypesModel(api: widget.api);
     filters = FiltersModel(api: widget.api);
 
+    // Load tags, place types and filters before loading places because places
+    // require tags and types to be loaded in order to be displayed. Ideally,
+    // when we get to a lot of places, the flow should be to load tags, types
+    // and filters at the start, then load places dynamically when we need them.
+    // For now this is good enough.
+    Future.wait([tags.load(), placeTypes.load(), filters.load()]).then((value) => places.load());
+
     filtered = FilteredPlacesModel(places);
 
     context.read<RandomConfigurationModel>().load(context.read<ServersModel>().currentServer!);

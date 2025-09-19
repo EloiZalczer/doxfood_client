@@ -12,11 +12,10 @@ class TagsModel extends ChangeNotifier {
 
   UnmodifiableListView<Tag> get tags => UnmodifiableListView(_tags);
 
-  TagsModel({required API api}) : _api = api {
-    _loadTags();
-  }
+  TagsModel({required API api}) : _api = api;
 
-  Future<void> _loadTags() async {
+  Future<void> load() async {
+    print("loading tags");
     _tags.clear();
     _tags.addAll((await _api.getTags()));
 

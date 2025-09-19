@@ -13,11 +13,9 @@ class PlacesModel extends ChangeNotifier {
 
   UnmodifiableListView<PlaceInfo> get places => UnmodifiableListView(_places);
 
-  PlacesModel({required API api}) : _api = api {
-    _loadPlaces();
-  }
+  PlacesModel({required API api}) : _api = api;
 
-  Future<void> _loadPlaces() async {
+  Future<void> load() async {
     _places.clear();
     _places.addAll((await _api.getPlaces()));
 

@@ -70,19 +70,10 @@ class _MapWidgetState extends State<MapWidget> {
                 return CurrentLocationLayer(positionStream: value.positionStream, headingStream: value.headingStream);
               },
             ),
-            const MapCompass(icon: Compass(), hideIfRotatedNorth: true, padding: EdgeInsets.only(top: 80, right: 10)),
+            const MapCompass(icon: Compass(), hideIfRotatedNorth: true, padding: EdgeInsets.only(top: 130, right: 10)),
           ],
         ),
       ],
     );
-  }
-}
-
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

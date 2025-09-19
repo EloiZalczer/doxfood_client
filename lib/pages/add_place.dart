@@ -192,7 +192,21 @@ class MapPreview extends StatelessWidget {
               urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
               userAgentPackageName: "com.doxfood.app",
             ),
-            MarkerLayer(markers: [Marker(point: point, child: const FlutterLogo())]),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: point,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.amber,
+                      border: Border.all(color: Colors.white),
+                    ),
+                    child: const Icon(Icons.add, size: 20, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

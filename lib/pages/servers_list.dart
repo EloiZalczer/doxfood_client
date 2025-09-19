@@ -32,24 +32,16 @@ class _ServersListPageState extends State<ServersListPage> {
     try {
       api = await API.connectWithToken(s.uri, s.token);
     } on Unauthorized {
-      while (true) {
-        final password = await ConnectionExpiredDialog.show(context, s);
-        if (password == null) {
-          setState(() {
-            _loading = false;
-          });
-          return;
-        }
+      api = await ConnectionExpiredDialog.show(context, s);
 
-        try {
-          api = await API.connectWithPassword(s.uri, s.username, password);
-        } on Unauthorized {
-          continue;
-        }
-
-        servers.update(s.id, s.name, s.uri, s.username, api.pb.authStore.token);
-        break;
+      if (api == null) {
+        setState(() {
+          _loading = false;
+        });
+        return;
       }
+
+      servers.update(s.id, s.name, s.uri, s.username, api.pb.authStore.token);
     }
 
     servers.currentServer = s.id;

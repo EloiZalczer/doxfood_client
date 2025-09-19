@@ -13,11 +13,10 @@ class FiltersModel extends ChangeNotifier {
 
   UnmodifiableListView<Filter> get filters => UnmodifiableListView(_filters);
 
-  FiltersModel({required API api}) : _api = api {
-    _loadFilters();
-  }
+  FiltersModel({required API api}) : _api = api;
 
-  Future<void> _loadFilters() async {
+  Future<void> load() async {
+    print("loading filters");
     _filters.clear();
     _filters.addAll((await _api.getFilters()));
 

@@ -1,3 +1,5 @@
+import 'package:doxfood/api.dart';
+import 'package:doxfood/http_errors.dart';
 import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/utils/validators.dart';
 import 'package:doxfood/widgets/fields/password_field.dart';
@@ -8,7 +10,7 @@ class ConnectionExpiredDialog extends StatefulWidget {
 
   const ConnectionExpiredDialog({super.key, required this.server});
 
-  static Future<String?> show(BuildContext context, Server server) {
+  static Future<API?> show(BuildContext context, Server server) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -24,12 +26,24 @@ class ConnectionExpiredDialog extends StatefulWidget {
 class _ConnectionExpiredDialogState extends State<ConnectionExpiredDialog> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
+  String? _errorMessage;
   bool _valid = false;
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.pop(context, _passwordController.text);
+  void _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    API api;
+
+    try {
+      api = await API.connectWithPassword(widget.server.uri, widget.server.username, _passwordController.text);
+    } on BadRequest {
+      setState(() {
+        _errorMessage = "Invalid password";
+      });
+      return;
     }
+
+    if (mounted) Navigator.pop(context, api);
   }
 
   @override
@@ -54,6 +68,7 @@ class _ConnectionExpiredDialogState extends State<ConnectionExpiredDialog> {
           children: [
             const Text("Please connect again."),
             PasswordField(controller: _passwordController, validator: validateRequired),
+            if (_errorMessage != null) Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
           ],
         ),
       ),
