@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:doxfood/api.dart';
+import 'package:doxfood/controllers/place_selection_controller.dart';
 import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/location.dart';
 import 'package:doxfood/models/place_types.dart';
-import 'package:doxfood/models/selection.dart';
+import 'package:doxfood/models/selected_place.dart';
 import 'package:doxfood/pages/add_place.dart';
 import 'package:doxfood/utils/icons.dart';
 import 'package:doxfood/widgets/panel.dart';
@@ -54,17 +55,17 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    context.read<SelectionModel>().addListener(_onPlaceSelectionChanged);
+    context.read<SelectedPlaceModel>().addListener(_onPlaceSelectionChanged);
   }
 
   @override
   void dispose() {
     super.dispose();
-    context.read<SelectionModel>().removeListener(_onPlaceSelectionChanged);
+    context.read<SelectedPlaceModel>().removeListener(_onPlaceSelectionChanged);
   }
 
   void _onPlaceSelectionChanged() {
-    final place = context.read<SelectionModel>().selected;
+    final place = context.read<SelectedPlaceModel>().selected;
 
     if (place != null) {
       _centerMapOnPlace(place);
@@ -113,7 +114,7 @@ class _MapPageState extends State<MapPage> {
             key: _panelKey,
             onMapTapped: _onMapTapped,
             onPlaceTapped: (PlaceInfo place) {
-              context.read<SelectionModel>().selected = place;
+              context.read<PlaceSelectionController>().select(place);
             },
           ),
           ChangeNotifierProvider<PanelPositionModel>.value(
@@ -197,7 +198,7 @@ class MapPageHeader extends StatelessWidget {
                 child: Center(
                   child: SearchField(
                     onPlaceSelected: (PlaceInfo place) {
-                      context.read<SelectionModel>().selected = place;
+                      context.read<PlaceSelectionController>().select(place);
                     },
                   ),
                 ),

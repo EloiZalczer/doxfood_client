@@ -1,7 +1,7 @@
 import 'package:doxfood/api.dart';
 import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/location.dart';
-import 'package:doxfood/models/selection.dart';
+import 'package:doxfood/models/selected_place.dart';
 import 'package:doxfood/widgets/compass.dart';
 import 'package:doxfood/widgets/marker.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +46,7 @@ class _MapWidgetState extends State<MapWidget> {
               urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
               userAgentPackageName: "com.doxfood.app",
             ),
-            Consumer2<FilteredPlacesModel, SelectionModel>(
+            Consumer2<FilteredPlacesModel, SelectedPlaceModel>(
               builder: (context, places, selection, child) {
                 return MarkerLayer(
                   markers:

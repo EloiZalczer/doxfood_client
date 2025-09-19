@@ -1,10 +1,10 @@
 import 'package:doxfood/api.dart';
 import 'package:flutter/foundation.dart';
 
-class SelectionModel extends ChangeNotifier {
+class SelectedPlaceModel extends ChangeNotifier {
   PlaceInfo? _selected;
 
-  SelectionModel({PlaceInfo? selected}) : _selected = selected;
+  SelectedPlaceModel({PlaceInfo? selected}) : _selected = selected;
 
   PlaceInfo? get selected => _selected;
 

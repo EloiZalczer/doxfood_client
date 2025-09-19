@@ -2,7 +2,7 @@ import 'package:doxfood/api.dart';
 import 'package:doxfood/ext.dart';
 import 'package:doxfood/models/location.dart';
 import 'package:doxfood/models/place_types.dart';
-import 'package:doxfood/models/selection.dart';
+import 'package:doxfood/models/selected_place.dart';
 import 'package:doxfood/utils/distance.dart';
 import 'package:doxfood/widgets/rating.dart';
 import 'package:doxfood/widgets/reviews_panel.dart';
@@ -13,14 +13,23 @@ import 'package:provider/provider.dart';
 class PlacePanel extends StatefulWidget {
   final PlaceInfo place;
   final Function(int rating)? onAddReview;
+  final VoidCallback onClosePanel;
 
-  const PlacePanel({super.key, required this.place, this.onAddReview});
+  const PlacePanel({super.key, required this.place, required this.onClosePanel, this.onAddReview});
 
   @override
   State<PlacePanel> createState() => _PlacePanelState();
 }
 
 class _PlacePanelState extends State<PlacePanel> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    print("init state");
+    print(widget.place);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -51,16 +60,7 @@ class _PlacePanelState extends State<PlacePanel> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade300),
-                  child: IconButton(
-                    onPressed: () {
-                      context.read<SelectionModel>().selected = null;
-                      Navigator.popUntil(context, (route) {
-                        if (route.settings.name == "place") return false;
-                        return true;
-                      });
-                    },
-                    icon: const Icon(Icons.close),
-                  ),
+                  child: IconButton(onPressed: widget.onClosePanel, icon: const Icon(Icons.close)),
                 ),
               ),
             ],

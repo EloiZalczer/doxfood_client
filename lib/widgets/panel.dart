@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:doxfood/api.dart';
+import 'package:doxfood/controllers/place_selection_controller.dart';
 import 'package:doxfood/models/filtered_places.dart';
-import 'package:doxfood/models/selection.dart';
+import 'package:doxfood/models/selected_place.dart';
 import 'package:doxfood/pages/add_review.dart';
 import 'package:doxfood/widgets/place_panel.dart';
 import 'package:doxfood/widgets/place_tile.dart';
@@ -20,21 +23,22 @@ class PanelWidget extends StatefulWidget {
 
 class _PanelWidgetState extends State<PanelWidget> {
   var navigatorKey = GlobalKey<NavigatorState>();
+  late StreamSubscription _subscription;
 
   @override
   void initState() {
     super.initState();
-    context.read<SelectionModel>().addListener(_onPlaceSelectionChanged);
+    _subscription = context.read<PlaceSelectionController>().stream.listen(_onPlaceSelected);
   }
 
   @override
   void dispose() {
     super.dispose();
-    context.read<SelectionModel>().removeListener(_onPlaceSelectionChanged);
+    _subscription.cancel();
   }
 
-  void _onPlaceSelectionChanged() {
-    final place = context.read<SelectionModel>().selected;
+  void _onPlaceSelected(PlaceInfo? place) {
+    context.read<SelectedPlaceModel>().selected = place;
 
     if (place == null) return;
 
@@ -44,14 +48,29 @@ class _PanelWidgetState extends State<PanelWidget> {
 
     navigatorKey.currentState!.push(
       PageRouteBuilder(
-        settings: const RouteSettings(name: "place"), // Name the route so we can use this to pop all open places at once
+        settings: RouteSettings(
+          name: "place",
+          arguments: {"place": place},
+        ), // Name the route so we can use this to pop all open places at once
         pageBuilder: (context, animation, secondaryAnimation) {
-          return PlacePanel(place: place, onAddReview: (int rating) => _openAddReviewPage(place, rating));
+          return PlacePanel(
+            place: place,
+            onAddReview: (int rating) => _openAddReviewPage(place, rating),
+            onClosePanel: _onClosePlacePanel,
+          );
         },
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),
     );
+  }
+
+  void _onClosePlacePanel() {
+    context.read<SelectedPlaceModel>().selected = null;
+    navigatorKey.currentState!.popUntil((route) {
+      if (route.settings.name == "place") return false;
+      return true;
+    });
   }
 
   void _openAddReviewPage(PlaceInfo place, int rating) {
@@ -91,6 +110,7 @@ class _PanelWidgetState extends State<PanelWidget> {
             },
             child: Navigator(
               key: navigatorKey,
+              observers: [CurrentPlaceObserver(context: context)],
               onGenerateRoute: (routeSettings) {
                 return MaterialPageRoute(
                   builder: (context) {
@@ -110,7 +130,7 @@ class _PanelWidgetState extends State<PanelWidget> {
                                 return PlaceTile(
                                   place: model.places[index],
                                   onPlaceTapped: (PlaceInfo place) {
-                                    context.read<SelectionModel>().selected = place;
+                                    context.read<PlaceSelectionController>().select(place);
                                   },
                                 );
                               },
@@ -126,5 +146,29 @@ class _PanelWidgetState extends State<PanelWidget> {
         ),
       ],
     );
+  }
+}
+
+class CurrentPlaceObserver extends NavigatorObserver {
+  final BuildContext context;
+
+  CurrentPlaceObserver({required this.context});
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    if (previousRoute == null || previousRoute.settings.arguments == null) {
+      context.read<SelectedPlaceModel>().selected = null;
+      return;
+    }
+
+    final place = (previousRoute.settings.arguments as Map)["place"];
+
+    if (place == null) {
+      context.read<SelectedPlaceModel>().selected = null;
+      return;
+    } else {}
+    context.read<SelectedPlaceModel>().selected = place;
+
+    super.didPop(route, previousRoute);
   }
 }

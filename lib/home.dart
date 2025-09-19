@@ -1,14 +1,18 @@
+import 'dart:async';
+
 import 'package:doxfood/api.dart';
+import 'package:doxfood/controllers/place_selection_controller.dart';
 import 'package:doxfood/models/filtered_places.dart';
 import 'package:doxfood/models/filters.dart';
 import 'package:doxfood/models/place_types.dart';
 import 'package:doxfood/models/places.dart';
 import 'package:doxfood/models/random_config.dart';
-import 'package:doxfood/models/selection.dart';
+import 'package:doxfood/models/selected_place.dart';
 import 'package:doxfood/models/servers.dart';
 import 'package:doxfood/models/tags.dart';
 import 'package:doxfood/pages/map.dart';
 import 'package:doxfood/pages/random.dart';
+import 'package:doxfood/widgets/selectable_container.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +64,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ChangeNotifierProvider<PlaceTypesModel>.value(value: placeTypes),
         ChangeNotifierProvider<FiltersModel>.value(value: filters),
         ChangeNotifierProvider<FilteredPlacesModel>.value(value: filtered),
-        ChangeNotifierProvider<SelectionModel>(create: (context) => SelectionModel()),
+        ChangeNotifierProvider<SelectedPlaceModel>(create: (context) => SelectedPlaceModel()),
+        Provider<PlaceSelectionController>(create: (context) => PlaceSelectionController()),
         Provider<API>.value(value: widget.api),
       ],
       child: NavigatorPopHandler(
@@ -96,7 +101,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 RandomPage(
                                   onSuggestionClicked: (place) {
                                     DefaultTabController.of(context).animateTo(0);
-                                    context.read<SelectionModel>().selected = place;
+                                    context.read<PlaceSelectionController>().select(place);
                                   },
                                 ),
                               ],
